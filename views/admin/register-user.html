@@ -1,0 +1,62 @@
+<div id="adminRegisterUser">
+    <h3>Registrar Nuevo Usuario</h3>
+    <form id="registerUserForm" onsubmit="saveNewUser(event)">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="newUserName">Nombre</label>
+                <input type="text" id="newUserName" required>
+            </div>
+            <div class="form-group">
+                <label for="newUserLastname">Apellido</label>
+                <input type="text" id="newUserLastname" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="newUserEmail">Email</label>
+                <input type="email" id="newUserEmail" required>
+            </div>
+            <div class="form-group">
+                <label for="newUserCedula">Cédula</label>
+                <input type="text" id="newUserCedula" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="newUserPhone">Teléfono</label>
+                <input type="tel" id="newUserPhone" required>
+            </div>
+            <div class="form-group">
+                <label for="newUserPassword">Contraseña</label>
+                <input type="password" id="newUserPassword" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="newUserRole">Rol</label>
+                <select id="newUserRole" onchange="updateRoleFields()">
+                    <option value="">-- Seleccionar --</option>
+                </select>
+            </div>
+        </div>
+        <div id="doctorFields" style="display:none;">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="doctorSpecialty">Especialidad</label>
+                    <select id="doctorSpecialty"></select>
+                </div>
+                <div class="form-group">
+                    <label for="doctorSchedule">Horario de Atención</label>
+                    <input type="text" id="doctorSchedule" placeholder="Ej: 8AM - 5PM">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="doctorConsultPhone">Teléfono Consulta</label>
+                    <input type="tel" id="doctorConsultPhone">
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-20">Registrar Usuario</button>
+    </form>
+</div>

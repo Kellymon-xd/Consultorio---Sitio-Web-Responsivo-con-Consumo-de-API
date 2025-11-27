@@ -1,0 +1,38 @@
+<div id="doctorMedicalHistory" class="section">
+    <h3>Registrar Antecedente Médico</h3>
+
+    <form id="medicalHistoryForm" onsubmit="saveMedicalHistory(event)">
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="historyPatient">Paciente</label>
+                <select id="historyPatient" required>
+                    <option value="">-- Seleccionar --</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row full">
+            <div class="form-group">
+                <label for="historyAllergies">Alergias</label>
+                <input type="text" id="historyAllergies" required>
+            </div>
+        </div>
+
+        <div class="form-row full">
+            <div class="form-group">
+                <label for="historyChronic">Enfermedades Crónicas</label>
+                <input type="text" id="historyChronic" required>
+            </div>
+        </div>
+
+        <div class="form-row full">
+            <div class="form-group">
+                <label for="historyObservations">Observaciones Generales</label>
+                <textarea id="historyObservations" rows="4"></textarea>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-20">Registrar Antecedente</button>
+    </form>
+</div>

@@ -1,0 +1,63 @@
+<div id="secretaryRegisterPatient" class="section">
+    <h3>Registrar Nuevo Paciente</h3>
+
+    <form id="registerPatientForm" onsubmit="saveNewPatient(event)">
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="patientName">Nombre</label>
+                <input type="text" id="patientName" required>
+            </div>
+            <div class="form-group">
+                <label for="patientLastname">Apellido</label>
+                <input type="text" id="patientLastname" required>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="patientCedula">Cédula</label>
+                <input type="text" id="patientCedula" required>
+            </div>
+            <div class="form-group">
+                <label for="patientEmail">Email</label>
+                <input type="email" id="patientEmail" required>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="patientPhone">Teléfono</label>
+                <input type="tel" id="patientPhone" required>
+            </div>
+            <div class="form-group">
+                <label for="patientBirthDate">Fecha de Nacimiento</label>
+                <input type="date" id="patientBirthDate" required>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="patientGender">Sexo</label>
+                <select id="patientGender" required>
+                    <option value="">-- Seleccionar --</option>
+                    <option value="M">Masculino</option>
+                    <option value="F">Femenino</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="patientAddress">Dirección</label>
+                <input type="text" id="patientAddress" required>
+            </div>
+        </div>
+
+        <div class="form-row full">
+            <div class="form-group">
+                <label for="patientEmergency">Contacto de Emergencia</label>
+                <input type="text" id="patientEmergency" required>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-20">Registrar Paciente</button>
+    </form>
+</div>

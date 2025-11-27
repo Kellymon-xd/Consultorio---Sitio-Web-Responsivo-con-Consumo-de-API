@@ -1,0 +1,55 @@
+<div id="adminUserDetail" class="section active">
+    <button class="back-btn" onclick="showAdminSection('users')">← Volver</button>
+
+    <div class="info-grid">
+        <div class="info-item">
+            <label>Nombre</label>
+            <p id="detailName"></p>
+        </div>
+        <div class="info-item">
+            <label>Apellido</label>
+            <p id="detailLastname"></p>
+        </div>
+        <div class="info-item">
+            <label>Email</label>
+            <p id="detailEmail"></p>
+        </div>
+        <div class="info-item">
+            <label>Cédula</label>
+            <p id="detailCedula"></p>
+        </div>
+        <div class="info-item">
+            <label>Teléfono</label>
+            <p id="detailPhone"></p>
+        </div>
+        <div class="info-item">
+            <label>Contraseña</label>
+            <p></p>
+        </div>
+        <div class="info-item">
+            <label>Rol</label>
+            <p id="detailRole"></p>
+        </div>
+        <div class="info-item">
+            <label>Fecha de Registro</label>
+            <p id="detailRegistryDate"></p>
+        </div>
+        <div class="info-item doctorFields" style="display:none;">
+            <label>Especialidad</label>
+            <p id="detailDoctorSpecialty"></p>
+        </div>
+
+        <div class="info-item doctorFields" style="display:none;">
+            <label>Horario de Atención</label>
+            <p id="detailDoctorSchedule"></p>
+        </div>
+
+        <div class="info-item doctorFields" style="display:none;">
+            <label>Teléfono Consulta</label>
+            <p id="detailDoctorPhone"></p>
+        </div>
+
+    </div>
+    <button id="btnEditUser" class="btn btn-primary mt-20" data-userid="">Editar Usuario</button>
+
+</div>
