@@ -154,9 +154,7 @@ async function editUserDetail(userId, medicoId, roleId) {
             document.getElementById('editUserName').value = user.nombre;
             document.getElementById('editUserLastname').value = user.apellido;
             document.getElementById('editUserEmail').value = user.email || '';
-            document.getElementById('editUserCedula').value = user.cedula;
             document.getElementById('editUserPhone').value = user.telefono || '';
-            document.getElementById('editUserPassword').value = '';
 
             const doctorFields = document.getElementById('editDoctorFields');
 
