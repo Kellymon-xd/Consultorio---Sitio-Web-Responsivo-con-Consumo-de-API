@@ -2,13 +2,13 @@
 async function loadUsersList() {
     const usersList = document.getElementById('usersList');
     const noUsersMessage = document.getElementById('noUsersMessage');
-     
+
     try {
         const rolesRes = await fetch('https://localhost:7193/api/Rol');
         const roles = await rolesRes.json();
         const rolesMap = {};
         roles.forEach(r => rolesMap[r.id_Rol] = r.descripcion_Rol);
-       
+
 
         const usersRes = await fetch('https://localhost:7193/api/Usuarios');
         const users = await usersRes.json();
@@ -26,7 +26,7 @@ async function loadUsersList() {
             const roleName = rolesMap[user.id_Rol];
             const stateBadge = user.activo ? 'Activo' : 'Inactivo';
             const stateClass = user.activo ? 'badge-active' : 'badge-inactive';
-            const roleBadge =    user.id_Rol === 1 ? 'badge-admin' :    user.id_Rol === 2 ? 'badge-secretary' :    'badge-doctor';
+            const roleBadge = user.id_Rol === 1 ? 'badge-admin' : user.id_Rol === 2 ? 'badge-secretary' : 'badge-doctor';
 
             const lockBadge = user.bloqueado
                 ? '<span class="badge badge-inactive">Bloqueado</span>'
@@ -63,7 +63,7 @@ async function loadUserDetail(userId) {
         const user = await res.json();
 
         // Traer nombre rol
-        const rolRes = await fetch(`https://localhost:7193/api/Rol/${user.id_Rol}`);    
+        const rolRes = await fetch(`https://localhost:7193/api/Rol/${user.id_Rol}`);
         const rol = await rolRes.json();
 
         // Llenar datos básicos
@@ -73,87 +73,127 @@ async function loadUserDetail(userId) {
         document.getElementById('detailCedula').textContent = user.cedula;
         document.getElementById('detailPhone').textContent = user.telefono || '-';
         document.getElementById('detailRole').textContent = rol.descripcion_Rol;
-        document.getElementById('detailRegistryDate').textContent = new Date(user.fecha_Registro).toLocaleString();
+        document.getElementById('detailRegistryDate').textContent =
+            new Date(user.fecha_Registro).toLocaleString();
 
-        // Mostrar datos de médico si aplica
-const doctorFields = document.querySelectorAll('.doctorFields');
+        const doctorFields = document.querySelectorAll('.doctorFields');
 
-if (user.id_Rol === 2) { // 2 = médico
+        // Obtener botón desde antes (para evitar re-declaración)
+        const btnEdit = document.getElementById('btnEditUser');
+
+        if (user.id_Rol === 2) { // Médico
+            const medicoId = user.ID_Medico; // <-- EL ID REAL DEL MÉDICO
+
             // Traer nombre especialidad
-        const espRes = await fetch(`https://localhost:7193/api/Especialidades/${user.ID_Especialidad}`);
-        const especialidades = await espRes.json();
+            const espRes = await fetch(`https://localhost:7193/api/Especialidades/${user.ID_Especialidad}`);
+            const especialidades = await espRes.json();
 
-    doctorFields.forEach(f => f.style.display = "grid");
+            // Traer contrato
+            const contRes = await fetch(`https://localhost:7193/api/TipoContrato/${user.ID_Contrato}`);
+            const contrato = await contRes.json();
 
-    document.getElementById('detailDoctorSpecialty').textContent = especialidades.nombre_Especialidad;
-    document.getElementById('detailDoctorSchedule').textContent = user.Horario_Atencion || '-';
-    document.getElementById('detailDoctorPhone').textContent = user.Telefono_Consulta || '-';
+            doctorFields.forEach(f => f.style.display = "grid");
 
-} else {
-    doctorFields.forEach(f => f.style.display = "none");
-}
+            // Llenar datos
+            document.getElementById('detailDoctorSpecialty').textContent = especialidades.nombre_Especialidad;
+            document.getElementById('detailDoctorSchedule').textContent = user.Horario_Atencion || '-';
+            document.getElementById('detailDoctorPhone').textContent = user.Telefono_Consulta || '-';
+            document.getElementById('detailDoctorContract').textContent = contrato.descripcion || '-';
 
-        // Asignar userId al botón de editar
-const btnEdit = document.getElementById('btnEditUser');
-if (btnEdit) {
-    btnEdit.dataset.userid = userId; 
-    btnEdit.onclick = () => editUserDetail(userId);
-}
+            // Guardar valores para el botón Editar
+            btnEdit.dataset.userid = userId;
+            btnEdit.dataset.medicoid = medicoId;
+            btnEdit.dataset.roleid = user.id_Rol;
+
+            // Asignar función editar con TODOS los valores
+            btnEdit.onclick = () =>
+                editUserDetail(
+                    userId,
+                    medicoId,
+                    user.id_Rol
+                );
+        } else {
+            doctorFields.forEach(f => f.style.display = "none");
+
+            // Solo usuario normal
+            if (btnEdit) {
+                btnEdit.dataset.userid = userId;
+                btnEdit.dataset.roleid = user.id_Rol;
+
+                btnEdit.onclick = () =>
+                    editUserDetail(
+                        userId,
+                        null, // No tiene medicoId
+                        user.id_Rol
+                    );
+            }
+        }
+
     } catch (error) {
         console.error('Error al cargar detalle del usuario:', error);
     }
 }
 
-
-
-async function editUserDetail(userId) {
+async function editUserDetail(userId, medicoId, roleId) {
     try {
-
         const res = await fetch(`https://localhost:7193/api/Usuarios/${userId}`);
         const user = await res.json();
 
-        // Cargar el HTML de editar usuario
         const editHtmlRes = await fetch('../views/admin/edit-user.html');
         const editHtml = await editHtmlRes.text();
         const container = document.getElementById('contentAdmin');
         container.innerHTML = editHtml;
 
-            const btnBack = document.getElementById('btnBackEdit');
+        setTimeout(async () => {
 
-        setTimeout(() => {
+            // Cargar combos
+            await loadSpecialties("editDoctorSpecialty");
+            await loadContracts("editDoctorContract");
+
+            // Llenar datos usuario básico
             document.getElementById('editUserName').value = user.nombre;
             document.getElementById('editUserLastname').value = user.apellido;
             document.getElementById('editUserEmail').value = user.email || '';
             document.getElementById('editUserCedula').value = user.cedula;
             document.getElementById('editUserPhone').value = user.telefono || '';
-            document.getElementById('editUserPassword').value = ''; 
-            // Mostrar/ocultar campos de doctor si aplica
+            document.getElementById('editUserPassword').value = '';
+
             const doctorFields = document.getElementById('editDoctorFields');
-            if (user.id_Rol === 2) {
+
+            if (roleId == 2) {
                 doctorFields.style.display = 'block';
-                document.getElementById('editDoctorSpecialty').value = user.ID_Especialidad || '';
+
+                document.getElementById('editDoctorSpecialty').value = user.ID_Especialidad;
+                document.getElementById('editDoctorContract').value = user.ID_Contrato;
                 document.getElementById('editDoctorSchedule').value = user.Horario_Atencion || '';
                 document.getElementById('editDoctorConsultPhone').value = user.Telefono_Consulta || '';
             } else {
                 doctorFields.style.display = 'none';
             }
-        }, 0);
+
+            // ====== BOTÓN GUARDAR ======
+            document.getElementById("btnUpdateUser").onclick = () => {
+                saveEditedUser(userId, medicoId, roleId);
+            };
+
+        }, 50);
+
+        // ====== BOTÓN VOLVER ======
+        document.getElementById('btnBackEdit').onclick = async () => {
+            const detailHtmlRes = await fetch('../views/admin/userDetail.html');
+            const detailHtml = await detailHtmlRes.text();
+
+            const container = document.getElementById('contentAdmin');
+            container.innerHTML = detailHtml;
+
+            loadUserDetail(userId);
+        };
 
     } catch (error) {
         console.error('Error al cargar formulario de edición:', error);
     }
-
-    btnBackEdit.onclick = async () => {
-    const detailHtmlRes = await fetch('../views/admin/userDetail.html');
-    const detailHtml = await detailHtmlRes.text();
-
-    const container = document.getElementById('contentAdmin');
-    container.innerHTML = detailHtml;
-
-    loadUserDetail(userId);
-};
-
 }
+
 
 
 // ===============================
@@ -186,22 +226,28 @@ async function updateRoleFields() {
 
     if (role == 2) { // Médico
         doctorFields.style.display = "block";
-        await loadSpecialties();
+        await loadSpecialties("doctorSpecialty");
+        await loadContracts("doctorContract");
     } else {
         doctorFields.style.display = "none";
     }
 }
 
 
-// ===============================
+// ====================================
 // CARGAR ESPECIALIDADES
-// ===============================
-async function loadSpecialties() {
+// ====================================
+async function loadSpecialties(elementId) {
     try {
         const res = await fetch("https://localhost:7193/api/Especialidades/combo");
         const data = await res.json();
 
-        const select = document.getElementById("doctorSpecialty");
+        const select = document.getElementById(elementId);
+        if (!select) {
+            console.error(`Elemento con id ${elementId} no encontrado`);
+            return;
+        }
+
         select.innerHTML = '<option value="">-- Seleccionar --</option>';
 
         data.forEach(e => {
@@ -214,7 +260,31 @@ async function loadSpecialties() {
     }
 }
 
+// ====================================
+// CARGAR CONTRATO
+// ====================================
+async function loadContracts(elementId) {
+    try {
+        const res = await fetch("https://localhost:7193/api/TipoContrato");
+        const data = await res.json();
 
+        const select = document.getElementById(elementId);
+        if (!select) {
+            console.error(`Elemento con id ${elementId} no encontrado`);
+            return;
+        }
+
+        select.innerHTML = '<option value="">-- Seleccionar --</option>';
+
+        data.forEach(e => {
+            select.innerHTML += `
+                <option value="${e.iD_Contrato}">${e.descripcion}</option>
+            `;
+        });
+    } catch (error) {
+        console.error("Error cargando especialidades:", error);
+    }
+}
 
 // =====================================
 // GUARDAR USUARIO (NORMAL O MÉDICO)
@@ -270,11 +340,12 @@ async function saveNewUser(event) {
     const specialty = document.getElementById("doctorSpecialty").value;
     const schedule = document.getElementById("doctorSchedule").value;
     const consultPhone = document.getElementById("doctorConsultPhone").value;
+    const contract= document.getElementById("doctorContract").value;
 
     const doctorBody = {
         ...baseData,
         iD_Especialidad: parseInt(specialty),
-        iD_Contrato: 1,                // si tienes contrato por defecto
+        iD_Contrato: contract,                
         horario_Atencion: schedule,
         telefono_Consulta: consultPhone
     };
@@ -297,4 +368,48 @@ async function saveNewUser(event) {
     } catch (error) {
         console.error("Error:", error);
     }
+}
+
+async function saveEditedUser(userId, medicoId, roleId) {
+
+    const userBody = {
+        nombre: document.getElementById('editUserName').value,
+        apellido: document.getElementById('editUserLastname').value,
+        email: document.getElementById('editUserEmail').value,
+        telefono: document.getElementById('editUserPhone').value
+    };
+
+    await fetch(`https://localhost:7193/api/Usuarios/${userId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userBody)
+    });
+
+    // Médico
+    if (roleId == 2) {
+
+        const doctorBody = {
+            id_Especialidad: parseInt(document.getElementById('editDoctorSpecialty').value),
+            id_Contrato: parseInt(document.getElementById('editDoctorContract').value),
+            horario_Atencion: document.getElementById('editDoctorSchedule').value,
+            telefono_Consulta: document.getElementById('editDoctorConsultPhone').value
+        };
+
+        await fetch(`https://localhost:7193/api/Medicos/${medicoId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(doctorBody)
+        });
+    }
+
+    alert("Cambios guardados ✔");
+
+
+    const detailHtmlRes = await fetch('../views/admin/userDetail.html');
+    const detailHtml = await detailHtmlRes.text();
+
+    const container = document.getElementById('contentAdmin');
+    container.innerHTML = detailHtml;
+
+    loadUserDetail(userId);
 }
