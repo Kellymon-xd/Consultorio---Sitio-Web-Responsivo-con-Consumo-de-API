@@ -115,3 +115,79 @@ async function showUserDetail(userId) {
         document.getElementById('contentAdmin').innerHTML = '<p>Error cargando detalle del usuario.</p>';
     }
 }
+
+/* FUNCIONES DE MENU SECRETARIA*/
+async function showSecretarySection(section) {
+    let filePath = '';
+    switch (section) {
+        case 'pacientes':
+            filePath = '../views/secretaria/pacientes.html';
+            break;
+        case 'citas':
+            filePath = '../views/secretaria/citas.html';
+            break;
+        case 'registrarPaciente':
+            filePath = '../views/secretaria/registrarPaciente.html';
+            break;
+        case 'registrarCita':
+            filePath = '../views/secretaria/registrarCita.html';
+            break;
+        default:
+            return;
+    }
+
+    try {
+        const res = await fetch(filePath);
+        const html = await res.text();
+        document.getElementById('contentSecretaria').innerHTML = html;
+
+        // Llamar JS específico después de cargar el HTML
+        if (section === 'pacientes') {
+            loadSecrePatientsList();
+        }
+        if (section === 'citas') {
+            //loadCitasList();   
+        }
+    } catch (error) {
+        console.error('Error cargando sección:', error);
+        mainContent.innerHTML = '<p>Error cargando la sección.</p>';
+    }
+}
+
+/* FUNCIONES DE MENU DOCTOR*/
+async function showDoctorSection(section) {
+    let filePath = '';
+    switch (section) {
+        case 'pacientes':
+            filePath = '../views/doctor/pacientes.html';
+            break;
+        case 'citas':
+            filePath = '../views/doctor/citas.html';
+            break;
+        case 'regAtencionMedica':
+            filePath = '../views/doctor/atencionMedica.html';
+            break;
+        case 'regAntecedenteMedico':
+            filePath = '../views/doctor/antecedenteMedico.html';
+            break;
+        default:
+            return;
+    }
+
+    try {
+        const res = await fetch(filePath);
+        const html = await res.text();
+        document.getElementById('contentDoctor').innerHTML = html;
+
+        // Llamar JS específico después de cargar el HTML
+        if (section === 'pacientes') {
+            loadDocPatientsList();
+        }
+        if (section === 'citas') {
+            //loadCitasList();   
+        }
+    } catch (error) {
+        console.error('Error cargando sección:', error);
+        mainContent.innerHTML = '<p>Error cargando la sección.</p>';
+    }
+}

@@ -41,7 +41,7 @@ async function loadUsersList() {
                     <td><span class="badge ${stateClass}">${stateBadge}</span></td>
                     <td>${lockBadge}</td>
                     <td>
-                        <button class="btn-action btn-view" onclick="showUserDetail('${user.id_Usuario}')">Dettalle</button>
+                        <button class="btn-action btn-view" onclick="showUserDetail('${user.id_Usuario}')">Detalle</button>
                         <button class="btn-action btn-delete" onclick="toggleUserStatus('${user.id_Usuario}')">${user.activo ? 'Inactivar' : 'Activar'}</button>
                     </td>
                 </tr>
