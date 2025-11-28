@@ -147,7 +147,7 @@ async function editUserDetail(userId, medicoId, roleId) {
         setTimeout(async () => {
 
             // Cargar combos
-            await loadSpecialties("editDoctorSpecialty");
+            await loadStates("editDoctorSpecialty");
             await loadContracts("editDoctorContract");
 
             // Llenar datos usuario básico
@@ -224,7 +224,7 @@ async function updateRoleFields() {
 
     if (role == 2) { // Médico
         doctorFields.style.display = "block";
-        await loadSpecialties("doctorSpecialty");
+        await loadStates("doctorSpecialty");
         await loadContracts("doctorContract");
     } else {
         doctorFields.style.display = "none";
@@ -235,7 +235,7 @@ async function updateRoleFields() {
 // ====================================
 // CARGAR ESPECIALIDADES
 // ====================================
-async function loadSpecialties(elementId) {
+async function loadStates(elementId) {
     try {
         const res = await fetch("https://localhost:7193/api/Especialidades/combo");
         const data = await res.json();

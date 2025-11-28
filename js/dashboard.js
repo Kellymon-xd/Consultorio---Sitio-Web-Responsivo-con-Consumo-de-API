@@ -146,7 +146,8 @@ async function showSecretarySection(section) {
             loadSecrePatientsList();
         }
         if (section === 'citas') {
-            //loadCitasList();   
+            loadSecretaryCitasList()
+   
         }
     } catch (error) {
         console.error('Error cargando sección:', error);

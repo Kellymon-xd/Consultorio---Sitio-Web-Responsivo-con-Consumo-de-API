@@ -42,7 +42,7 @@ async function loadSecrePatientsList() {
 }
 
 async function loadDocPatientsList() {
-    const secretaryPatientsList = document.getElementById('doctorPatientsList');
+    const doctorPatientsList = document.getElementById('doctorPatientsList');
     const noPatientsMessage = document.getElementById('noPatientsMessage');
 
     try {
@@ -50,7 +50,7 @@ async function loadDocPatientsList() {
         const pacientes = await pacientesRes.json();
 
         if (pacientes.length === 0) {
-            secretaryPatientsList.innerHTML = '';
+            doctorPatientsList.innerHTML = '';
             noPatientsMessage.style.display = 'block';
             return;
         } else {
@@ -75,10 +75,10 @@ async function loadDocPatientsList() {
             `;
         });
 
-        secretaryPatientsList.innerHTML = html;
+        doctorPatientsList.innerHTML = html;
 
     } catch (error) {
         console.error(error);
-        secretaryPatientsList.innerHTML = '<tr><td colspan="7">Error cargando usuarios</td></tr>';
+        doctorPatientsList.innerHTML = '<tr><td colspan="7">Error cargando usuarios</td></tr>';
     }
 }
