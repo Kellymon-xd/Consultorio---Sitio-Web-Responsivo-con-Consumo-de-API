@@ -23,12 +23,12 @@ function showDashboard() {
             filePath = "../views/admin/menuAdmin.html";
             break;
         case 2:
-            roleText = "Secretario";
-            filePath = "../views/secretaria/menuSecretaria.html";
-            break;
-        case 3:
             roleText = "Médico";
             filePath = "../views/doctor/menuDoctor.html";
+            break;
+        case 3:
+            roleText = "Secretario";
+            filePath = "../views/secretaria/menuSecretaria.html";
             break;
         default:
             roleText = "Usuario";
@@ -87,7 +87,6 @@ async function showAdminSection(section) {
         const html = await res.text();
         document.getElementById('contentAdmin').innerHTML = html;
 
-        // Llamar JS específico después de cargar el HTML
         if (section === 'users') {
             loadUsersList();
         }
@@ -97,22 +96,6 @@ async function showAdminSection(section) {
     } catch (error) {
         console.error('Error cargando sección:', error);
         mainContent.innerHTML = '<p>Error cargando la sección.</p>';
-    }
-}
-
-async function showUserDetail(userId) {
-    try {
-        // Cargar el HTML del detalle de usuario
-        const res = await fetch('../views/admin/userDetail.html');
-        const html = await res.text();
-        document.getElementById('contentAdmin').innerHTML = html;
-
-        // Llamar a la función que llena los datos
-        await loadUserDetail(userId);
-
-    } catch (error) {
-        console.error('Error cargando detalle del usuario:', error);
-        document.getElementById('contentAdmin').innerHTML = '<p>Error cargando detalle del usuario.</p>';
     }
 }
 
@@ -141,13 +124,15 @@ async function showSecretarySection(section) {
         const html = await res.text();
         document.getElementById('contentSecretaria').innerHTML = html;
 
-        // Llamar JS específico después de cargar el HTML
         if (section === 'pacientes') {
             loadSecrePatientsList();
         }
         if (section === 'citas') {
             loadSecretaryCitasList()
-   
+        }
+        if (section === 'registrarCita') {
+            loadPacientes("appointmentPatient");
+            loadMedicos("appointmentDoctor");
         }
     } catch (error) {
         console.error('Error cargando sección:', error);
@@ -180,12 +165,14 @@ async function showDoctorSection(section) {
         const html = await res.text();
         document.getElementById('contentDoctor').innerHTML = html;
 
-        // Llamar JS específico después de cargar el HTML
         if (section === 'pacientes') {
             loadDocPatientsList();
         }
         if (section === 'citas') {
-            //loadCitasList();   
+            loadDoctorAppointments();
+        }
+        if (section === 'regAtencionMedica') {
+            loadCitasParaAtencion("careAppointment");   
         }
     } catch (error) {
         console.error('Error cargando sección:', error);

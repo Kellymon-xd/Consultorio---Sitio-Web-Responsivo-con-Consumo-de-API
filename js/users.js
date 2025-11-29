@@ -134,6 +134,20 @@ async function loadUserDetail(userId) {
     }
 }
 
+async function showUserDetail(userId) {
+    try {
+        const res = await fetch('../views/admin/userDetail.html');
+        const html = await res.text();
+        document.getElementById('contentAdmin').innerHTML = html;
+
+        await loadUserDetail(userId);
+
+    } catch (error) {
+        console.error('Error cargando detalle del usuario:', error);
+        document.getElementById('contentAdmin').innerHTML = '<p>Error cargando detalle del usuario.</p>';
+    }
+}
+
 async function editUserDetail(userId, medicoId, roleId) {
     try {
         const res = await fetch(`https://localhost:7193/api/Usuarios/${userId}`);

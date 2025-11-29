@@ -83,3 +83,164 @@ async function updateAppointmentStatus(idCita, newEstado) {
         console.error(error);
     }
 }
+
+// ====================================
+// CARGAR MÉDICOS
+// ====================================
+async function loadMedicos(elementId) {
+    try {
+        const res = await fetch("https://localhost:7193/api/Medicos/combo");
+        const data = await res.json();
+
+        const select = document.getElementById(elementId);
+        if (!select) {
+            console.error(`Elemento con id ${elementId} no encontrado`);
+            return;
+        }
+
+        select.innerHTML = '<option value="">-- Seleccionar médico --</option>';
+
+        data.forEach(m => {
+            select.innerHTML += `
+                <option value="${m.id_Medico}">
+                    ${m.nombreCompleto} — ${m.cedula}
+                </option>
+            `;
+        });
+
+    } catch (error) {
+        console.error("Error cargando médicos:", error);
+    }
+}
+
+
+// ====================================
+// CARGAR PACIENTES
+// ====================================
+async function loadPacientes(elementId) {
+    try {
+        const res = await fetch("https://localhost:7193/api/Pacientes/combo");
+        const data = await res.json();
+
+        const select = document.getElementById(elementId);
+        if (!select) {
+            console.error(`Elemento con id ${elementId} no encontrado`);
+            return;
+        }
+
+        select.innerHTML = '<option value="">-- Seleccionar paciente --</option>';
+
+        data.forEach(p => {
+            select.innerHTML += `
+                <option value="${p.id_Paciente}">
+                    ${p.nombreCompleto} — ${p.cedula}
+                </option>
+            `;
+        });
+
+    } catch (error) {
+        console.error("Error cargando pacientes:", error);
+    }
+}
+
+// ====================================
+// CARGAR CITAS DISPONIBLES PARA ATENCIÓN
+// ====================================
+async function loadCitasParaAtencion(elementId) {
+    try {
+        const res = await fetch("https://localhost:7193/api/Citas/para-atencionMedica");
+        const data = await res.json();
+
+        const select = document.getElementById(elementId);
+        if (!select) {
+            console.error(`Elemento con id ${elementId} no encontrado`);
+            return;
+        }
+
+        select.innerHTML = '<option value="">-- Seleccionar cita --</option>';
+
+        data.forEach(c => {
+            select.innerHTML += `
+                <option value="${c.id_Cita}">
+                    ${c.nombrePaciente} — ${c.cedulaPaciente} | Dr. ${c.nombreMedico} | ${c.fecha_Cita} ${c.hora_Cita}
+                </option>
+            `;
+        });
+
+    } catch (error) {
+        console.error("Error cargando citas para atención:", error);
+    }
+}
+
+// ====================================
+// CARGAR CITAS DE UN DOCTOR
+// ====================================
+async function loadDoctorAppointments() {
+    const doctorAppointmentsList = document.getElementById('doctorAppointmentsList');
+    const noCitasMessage = document.getElementById('noCitasMessage');
+
+    try {
+        const userJson = sessionStorage.getItem("currentUser");
+        if (!userJson) return;
+
+        const currentUser = JSON.parse(userJson);
+
+        if (currentUser.id_Rol !== 2) {
+            console.warn("El usuario no es médico.");
+            return;
+        }
+
+        const idMedico = currentUser.id_Medico;
+        if (!idMedico) {
+            console.error("No se encontró ID_Medico en sessionStorage.");
+            return;
+        }
+
+        const res = await fetch(`https://localhost:7193/api/Citas/medico/${idMedico}`);
+        const citas = await res.json();
+
+        const stateRes = await fetch('https://localhost:7193/api/EstadoCita');
+        const states = await stateRes.json();
+
+        const stateMap = {};
+        states.forEach(s => {
+            stateMap[s.iD_Estado_Cita] = s.descripcion;
+        });
+
+        if (!citas || citas.length === 0) {
+            doctorAppointmentsList.innerHTML = "";
+            noCitasMessage.style.display = "block";
+            return;
+        }
+
+        noCitasMessage.style.display = "none";
+
+        let html = "";
+        citas.forEach(cita => {
+
+            let statusClass = "";
+            if (cita.iD_Estado_Cita === 1) statusClass = 'badge badge-active';
+            else if (cita.iD_Estado_Cita === 2) statusClass = 'badge badge-inactive';
+            else if (cita.iD_Estado_Cita === 3) statusClass = 'badge badge-warning';
+
+            const estadoTexto = stateMap[cita.iD_Estado_Cita];
+
+            html += `
+                <tr>
+                    <td>${cita.nombrePaciente}</td>
+                    <td>${cita.fecha_Cita}</td>
+                    <td>${cita.hora_Cita}</td>
+                    <td><span class="${statusClass}">${estadoTexto}</span></td>
+                </tr>
+            `;
+        });
+
+        doctorAppointmentsList.innerHTML = html;
+
+    } catch (error) {
+        console.error(error);
+        doctorAppointmentsList.innerHTML = `
+            <tr><td colspan="4">Error cargando citas</td></tr>
+        `;
+    }
+}
