@@ -69,7 +69,7 @@ async function loadDocPatientsList() {
                     <td>${patient.email || '-'}</td>
                     <td><span class="badge ${stateClass}">${stateBadge}</span></td>
                     <td>
-                        <button class="btn-action btn-view" onclick="viewDoctorPatientDetail('${patient.id}')">Ver Expediente</button>
+                        <button class="btn-action btn-view" onclick="showPatientDetailDoctor(${patient.id_Paciente})">Ver Expediente</button>
                     </td>
                 </tr>
             `;
@@ -95,6 +95,110 @@ async function showPatientDetailDoctor(idPaciente) {
         console.error('Error cargando detalle del paciente:', error);
         document.getElementById('contentDoctor').innerHTML = '<p>Error cargando detalle del usuario.</p>';
     }
+}
+
+async function loadPatientDetailDoctor(idPaciente) {
+    try {
+        const pRes = await fetch(`https://localhost:7193/api/Pacientes/${idPaciente}`);
+        const p = await pRes.json();
+
+        document.getElementById("patientDetailId").textContent = p.iD_Paciente;
+        document.getElementById("patientDetailName").textContent = p.nombre;
+        document.getElementById("patientDetailLastname").textContent = p.apellido;
+        document.getElementById("patientDetailCedula").textContent = p.cedula;
+        document.getElementById("patientDetailEmail").textContent = p.email || "-";
+        document.getElementById("patientDetailPhone").textContent = p.telefono || "-";
+        document.getElementById("patientDetailBirth").textContent = p.fecha_Nacimiento?.split("T")[0] || "-";
+        document.getElementById("patientDetailGender").textContent = p.sexo || "-";
+        document.getElementById("patientDetailAddress").textContent = p.direccion || "-";
+        document.getElementById("patientDetailEmergency").textContent = p.contactoEmergencia || "-";
+
+
+        const antRes = await fetch(`https://localhost:7193/api/AntecedentesMedicos/paciente/${idPaciente}`);
+        const antecedentes = await antRes.json();
+
+        if (antecedentes.length === 0) {
+            document.getElementById("patientMedicalHistoryBox").style.display = "none";
+            document.getElementById("patientMedicalHistoryEmpty").style.display = "block";
+        } else {
+            const a = antecedentes[0];
+
+            document.getElementById("patientHistoryAllergies").textContent = a.alergias || "-";
+            document.getElementById("patientHistoryChronic").textContent = a.enfermedades_Cronicas || "-";
+            document.getElementById("patientHistoryObservations").textContent = a.observaciones_Generales || "-";
+            document.getElementById("patientHistoryDate").textContent = a.fecha_Registro || "-";
+
+            document.getElementById("patientMedicalHistoryBox").style.display = "block";
+            document.getElementById("patientMedicalHistoryEmpty").style.display = "none";
+        }
+
+
+        const medRes = await fetch(`https://localhost:7193/api/AtencionMedica/paciente/${idPaciente}`);
+        const atenciones = await medRes.json();
+
+        const container = document.getElementById("patientMedicalCaresContainer");
+        const emptyBox = document.getElementById("patientMedicalCaresEmpty");
+
+        if (!atenciones || atenciones.length === 0) {
+            container.innerHTML = '';
+            emptyBox.style.display = "block";
+        } else {
+            emptyBox.style.display = "none";
+
+            atenciones.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+            let html = `<div class="care-list-scroll">`;
+
+            atenciones.forEach((a, index) => {
+                const fechaText = a.fecha ? a.fecha.split("T")[0] : "-";
+                const motivo = a.motivo || "-";
+                const diagnostico = a.diagnostico || "-";
+                const tratamiento = a.tratamiento || "-";
+
+                html += `
+            <div class="care-item" onclick="toggleCareDetail('care${index}')">
+                <div class="care-header">
+                    <div>
+                        <p class="care-motivo">${fechaText} — ${motivo}</p>
+                    </div>
+                    <span id="careArrow${index}" class="care-arrow">▼</span>
+                </div>
+
+                <div id="care${index}" class="care-detail">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Diagnóstico</label>
+                            <p>${diagnostico}</p>
+                        </div>
+                        <div class="info-item full">
+                            <label>Tratamiento / Observaciones</label>
+                            <p>${tratamiento}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+
+    } catch (error) {
+        console.error("Error cargando expediente médico:", error);
+    }
+}
+
+function toggleCareDetail(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    const isHidden = el.style.display === "" || el.style.display === "none";
+    el.style.display = isHidden ? "block" : "none";
+
+    const arrow = document.getElementById("careArrow" + id.replace("care", ""));
+    if (arrow) arrow.classList.toggle("open");
 }
 
 async function loadPatientDetailSecretary(idPaciente) {
