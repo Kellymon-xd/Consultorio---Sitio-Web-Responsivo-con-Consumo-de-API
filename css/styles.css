@@ -233,6 +233,38 @@ body {
     transform: translateY(-1px);
 }
 
+.encabezado-conboton{
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 20px;
+}
+
+.info-medica {
+    margin-top: 30px;
+    text-align: center;
+    padding: 25px;
+    background: #f9fafb;
+    border-radius: 12px;
+    border: 2px dashed #d1d5db;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.info-medica h4 {
+    color: #4b5563;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.info-medica p {
+    color: #6b7280;
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+
 /* ===== TABLAS ===== */
 table {
     width: 100%;

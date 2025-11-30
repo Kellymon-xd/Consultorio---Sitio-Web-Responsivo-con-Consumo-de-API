@@ -1,5 +1,5 @@
 <div id="secretaryPatientEdit" class="section">
-    <button class="back-btn" onclick="loadView('views/secretary/patients.html')">← Volver</button>
+    <button id="btnBackEdit" class="back-btn">← Volver</button>
     <h3>Editar Paciente</h3>
 
     <form id="editPatientForm" onsubmit="saveEditedPatient(event)">
@@ -39,11 +39,7 @@
         <div class="form-row">
             <div class="form-group">
                 <label for="editPatientGender">Sexo</label>
-                <select id="editPatientGender" required>
-                    <option value="">-- Seleccionar --</option>
-                    <option value="M">Masculino</option>
-                    <option value="F">Femenino</option>
-                </select>
+                <input type="text" id="editPatientGender" required>
             </div>
             <div class="form-group">
                 <label for="editPatientAddress">Dirección</label>
@@ -55,6 +51,17 @@
             <div class="form-group">
                 <label for="editPatientEmergency">Contacto de Emergencia</label>
                 <input type="text" id="editPatientEmergency" required>
+            </div>
+        </div>
+
+        <!-- NUEVO CAMPO: ACTIVO -->
+        <div class="form-row full">
+            <div class="form-group">
+                <label for="editPatientActive">Activo</label>
+                <select id="editPatientActive" required>
+                    <option value="true">Activo</option>
+                    <option value="false">Inactivo</option>
+                </select>
             </div>
         </div>
 

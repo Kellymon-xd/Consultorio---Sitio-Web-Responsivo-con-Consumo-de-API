@@ -1,63 +1,82 @@
-<div id="doctorPatientDetail" class="section">
-    <button class="back-btn" onclick="loadView('views/doctor/patients.html')">← Volver</button>
+<div id="secretaryPatientDetail">
+    <button class="back-btn" onclick="showDoctorSection('pacientes')">← Volver</button>
 
-    <h3>Información Personal del Paciente</h3>
+    <!-- DATOS BÁSICOS -->
+    <div class="encabezado-conboton">
+        <h3>Expediente Médico del Paciente</h3>
+        <button id="btnEditPatient" class="btn-action btn-edit" data-patientid="">
+            Editar Expediente
+        </button>
+    </div>
+
 
     <div class="info-grid">
-        <div class="info-item">
-            <label>ID Paciente</label>
+        <div class="info-item"><label>ID Paciente</label>
             <p id="patientDetailId"></p>
         </div>
-        <div class="info-item">
-            <label>Nombre</label>
+        <div class="info-item"><label>Nombre</label>
             <p id="patientDetailName"></p>
         </div>
-        <div class="info-item">
-            <label>Apellido</label>
+        <div class="info-item"><label>Apellido</label>
             <p id="patientDetailLastname"></p>
         </div>
-        <div class="info-item">
-            <label>Cédula</label>
+        <div class="info-item"><label>Cédula</label>
             <p id="patientDetailCedula"></p>
         </div>
-        <div class="info-item">
-            <label>Email</label>
+        <div class="info-item"><label>Email</label>
             <p id="patientDetailEmail"></p>
         </div>
-        <div class="info-item">
-            <label>Teléfono</label>
+        <div class="info-item"><label>Teléfono</label>
             <p id="patientDetailPhone"></p>
         </div>
-        <div class="info-item">
-            <label>Fecha de Nacimiento</label>
+        <div class="info-item"><label>Fecha de Nacimiento</label>
             <p id="patientDetailBirth"></p>
         </div>
-        <div class="info-item">
-            <label>Sexo</label>
+        <div class="info-item"><label>Sexo</label>
             <p id="patientDetailGender"></p>
         </div>
-        <div class="info-item">
-            <label>Dirección</label>
+        <div class="info-item"><label>Dirección</label>
             <p id="patientDetailAddress"></p>
         </div>
-        <div class="info-item">
-            <label>Contacto Emergencia</label>
+        <div class="info-item"><label>Contacto de Emergencia</label>
             <p id="patientDetailEmergency"></p>
-        </div>
-        <div class="info-item">
-            <label>Estado</label>
-            <p><span id="patientDetailStatus" class="badge"></span></p>
-        </div>
-        <div class="info-item">
-            <label>Fecha de Registro</label>
-            <p id="patientDetailRegistry"></p>
         </div>
     </div>
 
-    <div style="margin-top: 30px; text-align: center; padding: 20px; background: #f8f9fa; border-radius: 10px; border: 2px dashed #dee2e6;">
-        <h4 style="color: #6c757d; margin-bottom: 10px;">Información Médica</h4>
-        <p style="color: #6c757d; margin: 0;">
-            El historial médico y antecedentes solo están disponibles para el personal médico.
-        </p>
+    <!-- ANTECEDENTE ÚNICO -->
+    <h3 class="section-title">Antecedente Médico</h3>
+
+    <!-- CUANDO SÍ EXISTE -->
+    <div class="history-box" id="patientMedicalHistoryBox">
+        <div class="info-grid">
+            <div class="info-item"><label>Alergias</label>
+                <p id="patientHistoryAllergies"></p>
+            </div>
+            <div class="info-item"><label>Enfermedades Crónicas</label>
+                <p id="patientHistoryChronic"></p>
+            </div>
+            <div class="info-item full"><label>Observaciones</label>
+                <p id="patientHistoryObservations"></p>
+            </div>
+            <div class="info-item"><label>Fecha</label>
+                <p id="patientHistoryDate"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUANDO NO EXISTE EL ANTECEDENTE -->
+    <div id="patientMedicalHistoryEmpty" class="info-medica" style="display:none; cursor:pointer;"
+        onclick="window.location.href='registrarAntecedente.html'">
+        <h4>No hay antecedentes médicos</h4>
+        <p>Clic aquí para registrar el antecedente del paciente</p>
+    </div>
+
+    <!-- HISTORIAL DE ATENCIONES -->
+    <h3 class="section-title">Historial de Atenciones Médicas</h3>
+
+    <div id="patientMedicalCaresContainer" style="max-height:400px; overflow-y:auto;"></div>
+
+    <div id="patientMedicalCaresEmpty" class="empty-box" style="display:none;">
+        <p>No hay atenciones médicas registradas.</p>
     </div>
 </div>
