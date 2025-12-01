@@ -18,7 +18,6 @@ async function loadSecrePatientsList() {
         pacientes.forEach(patient => {
             const stateBadge = patient.activo ? 'Activo' : 'Inactivo';
             const stateClass = patient.activo ? 'badge-active' : 'badge-inactive';
-            console.info(patient.iD_Paciente);
 
             html += `
                 <tr>
@@ -259,7 +258,7 @@ async function loadPatientDetailSecretary(idPaciente) {
         statusSpan.className = p.activo ? "badge badge-active" : "badge badge-inactive";
 
         document.getElementById("btnEditPatient").onclick = () => {
-            showEditPatientFormSecretary(idPaciente);
+            showEditPatientFormSecretary(p);
         };
 
     } catch (error) {
@@ -281,15 +280,15 @@ async function showPatientDetailSecretary(patientId) {
     }
 }
 
-async function showEditPatientFormSecretary(idPaciente) {
+async function showEditPatientFormSecretary(paciente) {
     try {
         const res = await fetch('../views/secretaria/edit-patient.html');
         const html = await res.text();
         document.getElementById('contentSecretaria').innerHTML = html;
 
-        await loadEditPatientForm(idPaciente);
+        await loadEditPatientFormSecretary(paciente);
         document.getElementById("btnBackEdit").onclick = () => {
-            showPatientDetailSecretary(idPaciente);
+            showPatientDetailSecretary(paciente.iD_Paciente);
         };
 
     } catch (error) {
@@ -297,32 +296,30 @@ async function showEditPatientFormSecretary(idPaciente) {
     }
 }
 
-async function loadEditPatientFormSecretary(idPaciente) {
+function loadEditPatientFormSecretary(paciente) {
     try {
-        const res = await fetch(`https://localhost:7193/api/Pacientes/${idPaciente}`);
-        const p = await res.json();
 
-        document.getElementById("editPatientName").value = p.nombre;
-        document.getElementById("editPatientLastname").value = p.apellido;
+        document.getElementById("editPatientName").value = paciente.nombre;
+        document.getElementById("editPatientLastname").value = paciente.apellido;
 
-        document.getElementById("editPatientCedula").value = p.cedula;
+        document.getElementById("editPatientCedula").value = paciente.cedula;
         document.getElementById("editPatientCedula").disabled = true;
 
-        document.getElementById("editPatientEmail").value = p.email;
-        document.getElementById("editPatientPhone").value = p.telefono;
+        document.getElementById("editPatientEmail").value = paciente.email;
+        document.getElementById("editPatientPhone").value = paciente.telefono;
 
-        document.getElementById("editPatientBirthDate").value = p.fecha_Nacimiento?.split("T")[0];
+        document.getElementById("editPatientBirthDate").value = paciente.fecha_Nacimiento?.split("T")[0];
         document.getElementById("editPatientBirthDate").disabled = true;
 
-        document.getElementById("editPatientGender").value = p.sexo;
+        document.getElementById("editPatientGender").value = paciente.sexo;
         document.getElementById("editPatientGender").disabled = true;
 
-        document.getElementById("editPatientAddress").value = p.direccion;
-        document.getElementById("editPatientEmergency").value = p.contactoEmergencia;
+        document.getElementById("editPatientAddress").value = paciente.direccion;
+        document.getElementById("editPatientEmergency").value = paciente.contactoEmergencia;
 
-        document.getElementById("editPatientActive").value = p.activo ? "true" : "false";
+        document.getElementById("editPatientActive").value = paciente.activo ? "true" : "false";
 
-        document.getElementById("editPatientForm").dataset.patientid = idPaciente;
+        document.getElementById("editPatientForm").dataset.patientid = paciente.iD_Paciente;
 
     } catch (error) {
         console.error("Error llenando el formulario:", error);
@@ -359,6 +356,7 @@ async function saveEditedPatient(event) {
         }
 
         alert("Paciente actualizado correctamente");
+        showPatientDetailSecretary(idPaciente);
 
     } catch (error) {
         console.error("Error guardando cambios:", error);
@@ -549,6 +547,9 @@ async function saveMedicalCare(event) {
     }
 }
 
+// ====================================
+// REGISTRAR ANTECEDENTE MEDICO
+// ====================================
 async function saveMedicalHistory(event) {
     event.preventDefault();
 
@@ -587,7 +588,6 @@ async function saveMedicalHistory(event) {
 
         alert("Antecedente médico registrado correctamente.");
 
-        // Limpiar formulario
         document.getElementById("historyAllergies").value = "";
         document.getElementById("historyChronic").value = "";
         document.getElementById("historyObservations").value = "";
@@ -596,5 +596,60 @@ async function saveMedicalHistory(event) {
     } catch (err) {
         console.error("Error al guardar antecedente:", err);
         alert("Error al conectar con el servidor.");
+    }
+}
+
+// ====================================
+// REGISTRAR PACIENTE
+// ====================================
+async function saveNewPatient(event) {
+    event.preventDefault();
+
+    const nombre = document.getElementById("patientName").value.trim();
+    const apellido = document.getElementById("patientLastname").value.trim();
+    const cedula = document.getElementById("patientCedula").value.trim();
+    const email = document.getElementById("patientEmail").value.trim();
+    const telefono = document.getElementById("patientPhone").value.trim();
+    const fechaNacimiento = document.getElementById("patientBirthDate").value;
+    const sexo = document.getElementById("patientGender").value;
+    const direccion = document.getElementById("patientAddress").value.trim();
+    const contactoEmergencia = document.getElementById("patientEmergency").value.trim();
+
+    if (!nombre || !apellido || !cedula || !email || !telefono || !fechaNacimiento || !sexo || !direccion || !contactoEmergencia) {
+        alert("Por favor llena todos los campos.");
+        return;
+    }
+
+    const newPatient = {
+        nombre: nombre,
+        apellido: apellido,
+        cedula: cedula,
+        telefono: telefono,
+        email: email,
+        fecha_Nacimiento: fechaNacimiento,
+        sexo: sexo,
+        direccion: direccion,
+        contactoEmergencia: contactoEmergencia
+    };
+
+    try {
+        const res = await fetch('https://localhost:7193/api/Pacientes', {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newPatient)
+        });
+
+        if (!res.ok) {
+            const text = await res.text();
+            console.error(text);
+            throw new Error("Error al registrar el paciente");
+        }
+
+        alert("Paciente registrado con éxito");
+        document.getElementById("registerPatientForm").reset();
+
+    } catch (error) {
+        console.error(error);
+        alert("Hubo un problema al registrar el paciente");
     }
 }
