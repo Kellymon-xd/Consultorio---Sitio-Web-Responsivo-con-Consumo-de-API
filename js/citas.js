@@ -35,7 +35,7 @@ async function loadSecretaryCitasList() {
                     <td>${cita.hora_Cita}</td>
                     <td>
                         <select class="status-select ${statusClass}"
-                            onchange="updateAppointmentStatus(${cita.iD_Cita}, this.value); updateStatusSelectColor(this)">
+                            onchange="updateAppointmentStatus(${cita.iD_Cita}, this.value);">
                             ${states.map(s => `
                                 <option value="${s.iD_Estado_Cita}" 
                                     ${s.iD_Estado_Cita === cita.iD_Estado_Cita ? 'selected' : ''}>
@@ -161,7 +161,7 @@ async function loadCitasParaAtencion(elementId) {
 
         data.forEach(c => {
             select.innerHTML += `
-                <option value="${c.id_Cita}">
+                <option value="${c.iD_Cita}">
                     ${c.nombrePaciente} — ${c.cedulaPaciente} | Dr. ${c.nombreMedico} | ${c.fecha_Cita} ${c.hora_Cita}
                 </option>
             `;
@@ -244,3 +244,51 @@ async function loadDoctorAppointments() {
         `;
     }
 }
+
+// ====================================
+// REGISTRAR NUEVA CITA
+// ====================================
+async function saveNewAppointment(event) {
+    event.preventDefault();
+
+    try {
+        const pacienteId = parseInt(document.getElementById("appointmentPatient").value);
+        const medicoId = parseInt(document.getElementById("appointmentDoctor").value);
+        const fecha = document.getElementById("appointmentDate").value; // yyyy-mm-dd
+        const hora = document.getElementById("appointmentTime").value; // HH:mm
+
+        const horaTime = hora + ":00";
+
+        const body = {
+            ID_Paciente: pacienteId,
+            ID_Medico: medicoId,
+            Fecha_Cita: fecha + "T00:00:00", // DateTime
+            Hora_Cita: horaTime // TimeSpan
+        };
+
+        console.log("Enviando POST cita:", body);
+
+        const res = await fetch('https://localhost:7193/api/Citas', {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+
+        const text = await res.text();
+        console.log("Respuesta backend POST cita:", res.status, text);
+
+        if (!res.ok) {
+            alert("Error registrando la cita. Revisa la consola.");
+            return;
+        }
+
+        alert("Cita registrada correctamente");
+        document.getElementById("registerAppointmentForm").reset();
+
+
+    } catch (error) {
+        console.error("Error registrando cita:", error);
+        alert("Error registrando cita");
+    }
+}
+

@@ -497,3 +497,68 @@ async function saveDoctorEditedPatient(idPaciente, idAntecedente) {
     }
 }
 
+// ====================================
+// GUARDAR ATENCIÓN MÉDICA
+// ====================================
+async function saveMedicalCare(event) {
+    event.preventDefault();
+
+    const selectCita = document.getElementById("careAppointment");
+    const fecha = document.getElementById("careDate").value;
+    const motivo = document.getElementById("careReason").value.trim();
+    const diagnostico = document.getElementById("careDiagnosis").value.trim();
+    const observaciones = document.getElementById("careObservations").value.trim();
+
+    console.log("======= DATOS DEL FORM DE ATENCIÓN =======");
+    console.log("ID Cita:", document.getElementById("careAppointment").value);
+    console.log("Fecha:", document.getElementById("careDate").value);
+    console.log("Motivo:", document.getElementById("careReason").value.trim());
+    console.log("Diagnóstico:", document.getElementById("careDiagnosis").value.trim());
+    console.log("Observaciones:", document.getElementById("careObservations").value.trim());
+    console.log("===========================================");
+
+
+    // Validación simple
+    if (!selectCita.value || !fecha || !motivo || !diagnostico || !observaciones) {
+        alert("Por favor completa todos los campos.");
+        return;
+    }
+
+    const body = {
+        ID_Cita: parseInt(selectCita.value),
+        Motivo_Consulta: motivo,
+        Diagnostico: diagnostico,
+        Observaciones: observaciones,
+        Fecha: new Date(fecha).toISOString()
+    };
+
+
+    try {
+        const res = await fetch("https://localhost:7193/api/AtencionMedica", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+
+        const textResp = await res.text();
+        console.log("Respuesta backend POST atencion:", res.status, textResp);
+
+        if (!res.ok) {
+            alert("Error al registrar la atención. Revisa los campos.");
+            return;
+        }
+
+        alert("Atención médica registrada correctamente.");
+
+        // Limpiar formulario
+        selectCita.value = "";
+        document.getElementById("careDate").value = "";
+        document.getElementById("careReason").value = "";
+        document.getElementById("careDiagnosis").value = "";
+        document.getElementById("careObservations").value = "";
+
+    } catch (error) {
+        console.error("Error guardando atención médica:", error);
+        alert("No se pudo registrar la atención. Revisa la consola.");
+    }
+}
