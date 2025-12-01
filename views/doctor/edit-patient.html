@@ -57,40 +57,31 @@
             <input type="text" id="completeEditEmergency" required>
         </div>
 
-
-        <h4 class="section-title section-divider">Antecedentes Médicos</h4>
-
-        <div id="noAntecedentesBox" class="info-medica" style="display:none;">
-            <h4>Sin Antecedentes Médicos</h4>
-            <p>Este paciente aún no tiene antecedentes registrados.</p>
-            <button id="btnRegistrarAntecedente" class="btn-action btn-edit" style="margin-top:15px;">
-                Registrar Antecedente
-            </button>
-        </div>
-
         <div id="antecedentesSection">
+            <div id="formAntecendente">
+                <h4 class="section-title section-divider">Antecedentes Médicos</h4>
+                <div class="form-group">
+                    <label for="completeEditAllergies">Alergias</label>
+                    <input type="text" id="completeEditAllergies">
+                </div>
 
-            <div class="form-group">
-                <label for="completeEditAllergies">Alergias</label>
-                <input type="text" id="completeEditAllergies">
+                <div class="form-group">
+                    <label for="completeEditChronic">Enfermedades Crónicas</label>
+                    <input type="text" id="completeEditChronic">
+                </div>
+
+                <div class="form-group">
+                    <label for="completeEditObservations">Observaciones Generales</label>
+                    <textarea id="completeEditObservations" rows="4"></textarea>
+                </div>
+
+                <input type="hidden" id="completeEditHistoryId">
             </div>
-
-            <div class="form-group">
-                <label for="completeEditChronic">Enfermedades Crónicas</label>
-                <input type="text" id="completeEditChronic">
-            </div>
-
-            <div class="form-group">
-                <label for="completeEditObservations">Observaciones Generales</label>
-                <textarea id="completeEditObservations" rows="4"></textarea>
-            </div>
-
-            <input type="hidden" id="completeEditHistoryId">
         </div>
 
         <!-- BOTONES -->
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            <button id="btnSavePatient" class="btn btn-primary">Guardar Cambios</button>
         </div>
 
     </form>

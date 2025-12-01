@@ -100,26 +100,30 @@ async function showPatientDetailDoctor(idPaciente) {
 async function loadPatientDetailDoctor(idPaciente) {
     try {
         const pRes = await fetch(`https://localhost:7193/api/Pacientes/${idPaciente}`);
-        const p = await pRes.json();
+        const paciente = await pRes.json();
 
-        document.getElementById("patientDetailId").textContent = p.iD_Paciente;
-        document.getElementById("patientDetailName").textContent = p.nombre;
-        document.getElementById("patientDetailLastname").textContent = p.apellido;
-        document.getElementById("patientDetailCedula").textContent = p.cedula;
-        document.getElementById("patientDetailEmail").textContent = p.email || "-";
-        document.getElementById("patientDetailPhone").textContent = p.telefono || "-";
-        document.getElementById("patientDetailBirth").textContent = p.fecha_Nacimiento?.split("T")[0] || "-";
-        document.getElementById("patientDetailGender").textContent = p.sexo || "-";
-        document.getElementById("patientDetailAddress").textContent = p.direccion || "-";
-        document.getElementById("patientDetailEmergency").textContent = p.contactoEmergencia || "-";
+        document.getElementById("patientDetailId").textContent = paciente.iD_Paciente;
+        document.getElementById("patientDetailName").textContent = paciente.nombre;
+        document.getElementById("patientDetailLastname").textContent = paciente.apellido;
+        document.getElementById("patientDetailCedula").textContent = paciente.cedula;
+        document.getElementById("patientDetailEmail").textContent = paciente.email || "-";
+        document.getElementById("patientDetailPhone").textContent = paciente.telefono || "-";
+        document.getElementById("patientDetailBirth").textContent = paciente.fecha_Nacimiento?.split("T")[0] || "-";
+        document.getElementById("patientDetailGender").textContent = paciente.sexo || "-";
+        document.getElementById("patientDetailAddress").textContent = paciente.direccion || "-";
+        document.getElementById("patientDetailEmergency").textContent = paciente.contactoEmergencia || "-";
 
 
         // ----- ANTECEDENTES -----
         const antRes = await fetch(`https://localhost:7193/api/AntecedentesMedicos/paciente/${idPaciente}`);
+        let antecedente = null;
 
         const antBox = document.getElementById("patientMedicalHistoryBox");
         const antEmpty = document.getElementById("patientMedicalHistoryEmpty");
-        if (antRes.ok) {
+        if (antRes.status === 204) {
+            antBox.style.display = "none";
+            antEmpty.style.display = "block";
+        } else {
             antecedente = await antRes.json();
 
             document.getElementById("patientHistoryAllergies").textContent = antecedente.alergias || "-";
@@ -129,19 +133,15 @@ async function loadPatientDetailDoctor(idPaciente) {
 
             antBox.style.display = "block";
             antEmpty.style.display = "none";
-
-        } else {
-            antBox.style.display = "none";
-            antEmpty.style.display = "block";
         }
 
         // ----- ATENCIONES -----
         const medRes = await fetch(`https://localhost:7193/api/AtencionMedica/paciente/${idPaciente}`);
-        
+
         const container = document.getElementById("patientMedicalCaresContainer");
         const emptyBox = document.getElementById("patientMedicalCaresEmpty");
 
-        if (!medRes.ok) {
+        if (antRes.status === 204) {
             container.innerHTML = "";
             emptyBox.style.display = "block";
         } else {
@@ -188,12 +188,12 @@ async function loadPatientDetailDoctor(idPaciente) {
         // Botón editar
         const editBtn = document.getElementById("btnEditPatient");
         if (editBtn) {
-            editBtn.onclick = () => showEditPatientFormDoctor(idPaciente);
+            editBtn.onclick = () => showEditPatientFormDoctor(paciente, antecedente);
         }
 
         const createAntecedente = document.getElementById("patientMedicalHistoryEmpty");
         if (createAntecedente) {
-            createAntecedente.onclick = () => showRegAntecedenteFormDoctor(idPaciente, [p.nombre+" "+p.apellido]);
+            createAntecedente.onclick = () => showRegAntecedenteFormDoctor(idPaciente, [paciente.nombre + " " + paciente.apellido]);
         }
 
     } catch (error) {
@@ -212,7 +212,7 @@ async function showRegAntecedenteFormDoctor(idPaciente, nombre) {
         const pacienteInput = document.getElementById("historyPatient");
         if (pacienteInput) {
             pacienteInput.value = `${idPaciente} - ${nombre}`;
-            pacienteInput.dataset.idPaciente = idPaciente; // guardamos el id real por si lo necesitas al guardar
+            pacienteInput.dataset.idPaciente = idPaciente;
         }
 
         const btnBack = document.getElementById("btnBack");
@@ -369,7 +369,7 @@ async function saveEditedPatient(event) {
 }
 
 
-async function showEditPatientFormDoctor(idPaciente) {
+async function showEditPatientFormDoctor(paciente, antecedente) {
     try {
         const res = await fetch('../views/doctor/edit-patient.html');
 
@@ -377,9 +377,9 @@ async function showEditPatientFormDoctor(idPaciente) {
 
         document.getElementById('contentDoctor').innerHTML = html;
 
-        loadDoctorEditForm(idPaciente);
+        loadDoctorEditForm(paciente, antecedente);
         document.getElementById("btnBackEdit").onclick = () => {
-            showPatientDetailDoctor(idPaciente);
+            showPatientDetailDoctor(paciente.iD_Paciente);
         };
 
     } catch (error) {
@@ -387,40 +387,29 @@ async function showEditPatientFormDoctor(idPaciente) {
     }
 }
 
-async function loadDoctorEditForm(idPaciente) {
+async function loadDoctorEditForm(paciente, antecedente) {
     try {
-        const res = await fetch(`https://localhost:7193/api/Pacientes/${idPaciente}`);
-        if (!res.ok) throw new Error("Error al obtener paciente");
-        const p = await res.json();
 
-        document.getElementById("completeEditName").value = p.nombre || "";
-        document.getElementById("completeEditLastname").value = p.apellido || "";
-        document.getElementById("completeEditCedula").value = p.cedula || "";
-        document.getElementById("completeEditEmail").value = p.email || "";
-        document.getElementById("completeEditPhone").value = p.telefono || "";
-        document.getElementById("completeEditBirthDate").value = p.fecha_Nacimiento?.split("T")[0] || "";
-        document.getElementById("completeEditGender").value = p.sexo || "";
-        document.getElementById("completeEditAddress").value = p.direccion || "";
-        document.getElementById("completeEditEmergency").value = p.contactoEmergencia || "";
+        document.getElementById("completeEditName").value = paciente.nombre || "";
+        document.getElementById("completeEditLastname").value = paciente.apellido || "";
+        document.getElementById("completeEditCedula").value = paciente.cedula || "";
+        document.getElementById("completeEditEmail").value = paciente.email || "";
+        document.getElementById("completeEditPhone").value = paciente.telefono || "";
+        document.getElementById("completeEditBirthDate").value = paciente.fecha_Nacimiento?.split("T")[0] || "";
+        document.getElementById("completeEditGender").value = paciente.sexo || "";
+        document.getElementById("completeEditAddress").value = paciente.direccion || "";
+        document.getElementById("completeEditEmergency").value = paciente.contactoEmergencia || "";
 
 
         const form = document.getElementById("completeEditForm");
-        if (form) form.dataset.patientid = idPaciente;
+        if (form) form.dataset.patientid = paciente.iD_Paciente;
 
 
-        const antRes = await fetch(`https://localhost:7193/api/AntecedentesMedicos/paciente/${idPaciente}`);
-        if (!antRes.ok) throw new Error("Error al obtener antecedentes");
-        const antecedente = await antRes.json();
-
-        if (!antecedente || antecedente.length === 0) {
-            const noBox = document.getElementById("noAntecedentesBox");
-            const antSection = document.getElementById("antecedentesSection");
-            if (noBox) noBox.style.display = "block";
+        if (!antecedente) {
+            const antSection = document.getElementById("formAntecendente");
             if (antSection) antSection.style.display = "none";
         } else {
-            const noBox = document.getElementById("noAntecedentesBox");
-            const antSection = document.getElementById("antecedentesSection");
-            if (noBox) noBox.style.display = "none";
+            const antSection = document.getElementById("formAntecendente");
             if (antSection) antSection.style.display = "block";
 
             document.getElementById("completeEditAllergies").value = antecedente.alergias || "";
@@ -429,14 +418,82 @@ async function loadDoctorEditForm(idPaciente) {
             document.getElementById("completeEditHistoryId").value = antecedente.id_Antecedente || antecedente.iD_Antecedente || "";
         }
 
-        if (form) {
-            form.onsubmit = saveDoctorEditedPatient;
-        } else {
-            console.warn("No se encontró #completeEditForm");
+        const saveBtn = document.getElementById("btnSavePatient");
+        if (saveBtn) {
+            const idPaciente = paciente.iD_Paciente;
+            const idAntecedente = antecedente ? (antecedente.iD_Antecedente) : null;
+
+            saveBtn.onclick = () => saveDoctorEditedPatient(idPaciente, idAntecedente);
         }
+
 
     } catch (error) {
         console.error("Error llenando el formulario de edición (doctor):", error);
         alert("Error cargando datos del paciente");
     }
 }
+
+async function saveDoctorEditedPatient(idPaciente, idAntecedente) {
+    try {
+        if (!idPaciente) throw new Error("ID de paciente no encontrado");
+
+        const patientBody = {
+            nombre: document.getElementById("completeEditName").value,
+            apellido: document.getElementById("completeEditLastname").value,
+            telefono: document.getElementById("completeEditPhone").value,
+            email: document.getElementById("completeEditEmail").value,
+            direccion: document.getElementById("completeEditAddress").value,
+            contactoEmergencia: document.getElementById("completeEditEmergency").value,
+            activo: true
+        };
+
+        console.log("Enviando PUT paciente:", patientBody);
+
+        const updatePatientRes = await fetch(`https://localhost:7193/api/Pacientes/${idPaciente}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(patientBody)
+        });
+
+        const textResp = await updatePatientRes.text();
+        console.log("Respuesta backend paciente:", updatePatientRes.status, textResp);
+
+        if (!updatePatientRes.ok) {
+            alert("Error actualizando datos del paciente");
+            return;
+        }
+
+        // Actualizar antecedente solo si existe
+        if (idAntecedente) {
+            const antecedenteBody = {
+                iD_Paciente: parseInt(idPaciente),
+                alergias: document.getElementById("completeEditAllergies").value,
+                enfermedades_Cronicas: document.getElementById("completeEditChronic").value,
+                observaciones_Generales: document.getElementById("completeEditObservations").value
+            };
+
+            console.log("Enviando PUT antecedente:", antecedenteBody);
+
+            const resHist = await fetch(`https://localhost:7193/api/AntecedentesMedicos/${idAntecedente}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(antecedenteBody)
+            });
+
+            const textHist = await resHist.text();
+            console.log("Respuesta backend antecedente:", resHist.status, textHist);
+
+            if (!resHist.ok) {
+                alert("Paciente actualizado, pero error actualizando antecedente");
+            }
+        }
+
+        alert("Cambios guardados correctamente");
+        await showPatientDetailDoctor(idPaciente);
+
+    } catch (error) {
+        console.error("Error guardando cambios (doctor):", error);
+        alert("Error al guardar cambios");
+    }
+}
+
