@@ -141,7 +141,7 @@ async function loadPatientDetailDoctor(idPaciente) {
         const container = document.getElementById("patientMedicalCaresContainer");
         const emptyBox = document.getElementById("patientMedicalCaresEmpty");
 
-        if (antRes.status === 204) {
+        if (medRes.status === 204) {
             container.innerHTML = "";
             emptyBox.style.display = "block";
         } else {
@@ -267,7 +267,6 @@ async function loadPatientDetailSecretary(idPaciente) {
     }
 }
 
-
 async function showPatientDetailSecretary(patientId) {
     try {
         const res = await fetch('../views/secretaria/detallePaciente.html');
@@ -297,7 +296,6 @@ async function showEditPatientFormSecretary(idPaciente) {
         console.error("Error cargando vista de edición:", error);
     }
 }
-
 
 async function loadEditPatientFormSecretary(idPaciente) {
     try {
@@ -463,7 +461,6 @@ async function saveDoctorEditedPatient(idPaciente, idAntecedente) {
             return;
         }
 
-        // Actualizar antecedente solo si existe
         if (idAntecedente) {
             const antecedenteBody = {
                 iD_Paciente: parseInt(idPaciente),
@@ -509,16 +506,6 @@ async function saveMedicalCare(event) {
     const diagnostico = document.getElementById("careDiagnosis").value.trim();
     const observaciones = document.getElementById("careObservations").value.trim();
 
-    console.log("======= DATOS DEL FORM DE ATENCIÓN =======");
-    console.log("ID Cita:", document.getElementById("careAppointment").value);
-    console.log("Fecha:", document.getElementById("careDate").value);
-    console.log("Motivo:", document.getElementById("careReason").value.trim());
-    console.log("Diagnóstico:", document.getElementById("careDiagnosis").value.trim());
-    console.log("Observaciones:", document.getElementById("careObservations").value.trim());
-    console.log("===========================================");
-
-
-    // Validación simple
     if (!selectCita.value || !fecha || !motivo || !diagnostico || !observaciones) {
         alert("Por favor completa todos los campos.");
         return;
@@ -550,7 +537,6 @@ async function saveMedicalCare(event) {
 
         alert("Atención médica registrada correctamente.");
 
-        // Limpiar formulario
         selectCita.value = "";
         document.getElementById("careDate").value = "";
         document.getElementById("careReason").value = "";
@@ -560,5 +546,55 @@ async function saveMedicalCare(event) {
     } catch (error) {
         console.error("Error guardando atención médica:", error);
         alert("No se pudo registrar la atención. Revisa la consola.");
+    }
+}
+
+async function saveMedicalHistory(event) {
+    event.preventDefault();
+
+    const idPaciente = document.getElementById("historyPatient").dataset.idPaciente; 
+    const alergias = document.getElementById("historyAllergies").value.trim();
+    const cronicas = document.getElementById("historyChronic").value.trim();
+    const observaciones = document.getElementById("historyObservations").value.trim();
+
+    if (!idPaciente || !alergias || !cronicas) {
+        alert("Todos los campos obligatorios deben estar llenos.");
+        return;
+    }
+
+    const body = {
+        iD_Paciente: parseInt(idPaciente),
+        alergias: alergias,
+        enfermedades_Cronicas: cronicas,
+        observaciones_Generales: observaciones
+    };
+
+
+    try {
+        const res = await fetch("https://localhost:7193/api/AntecedentesMedicos", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+
+        const textResp = await res.text();
+        console.log("Respuesta backend:", res.status, textResp);
+
+        if (!res.ok) {
+            alert("No se pudo registrar el antecedente.");
+            return;
+        }
+
+        alert("Antecedente médico registrado correctamente.");
+
+        // Limpiar formulario
+        document.getElementById("historyAllergies").value = "";
+        document.getElementById("historyChronic").value = "";
+        document.getElementById("historyObservations").value = "";
+        showPatientDetailDoctor(idPaciente);
+
+    } catch (err) {
+        console.error("Error al guardar antecedente:", err);
+        alert("Error al conectar con el servidor.");
     }
 }
