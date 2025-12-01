@@ -114,35 +114,38 @@ async function loadPatientDetailDoctor(idPaciente) {
         document.getElementById("patientDetailEmergency").textContent = p.contactoEmergencia || "-";
 
 
+        // ----- ANTECEDENTES -----
         const antRes = await fetch(`https://localhost:7193/api/AntecedentesMedicos/paciente/${idPaciente}`);
-        const antecedentes = await antRes.json();
 
-        if (antecedentes.length === 0) {
-            document.getElementById("patientMedicalHistoryBox").style.display = "none";
-            document.getElementById("patientMedicalHistoryEmpty").style.display = "block";
+        const antBox = document.getElementById("patientMedicalHistoryBox");
+        const antEmpty = document.getElementById("patientMedicalHistoryEmpty");
+        if (antRes.ok) {
+            antecedente = await antRes.json();
+
+            document.getElementById("patientHistoryAllergies").textContent = antecedente.alergias || "-";
+            document.getElementById("patientHistoryChronic").textContent = antecedente.enfermedades_Cronicas || "-";
+            document.getElementById("patientHistoryObservations").textContent = antecedente.observaciones_Generales || "-";
+            document.getElementById("patientHistoryDate").textContent = antecedente.fecha_Registro || "-";
+
+            antBox.style.display = "block";
+            antEmpty.style.display = "none";
+
         } else {
-            const a = antecedentes[0];
-
-            document.getElementById("patientHistoryAllergies").textContent = a.alergias || "-";
-            document.getElementById("patientHistoryChronic").textContent = a.enfermedades_Cronicas || "-";
-            document.getElementById("patientHistoryObservations").textContent = a.observaciones_Generales || "-";
-            document.getElementById("patientHistoryDate").textContent = a.fecha_Registro || "-";
-
-            document.getElementById("patientMedicalHistoryBox").style.display = "block";
-            document.getElementById("patientMedicalHistoryEmpty").style.display = "none";
+            antBox.style.display = "none";
+            antEmpty.style.display = "block";
         }
 
-
+        // ----- ATENCIONES -----
         const medRes = await fetch(`https://localhost:7193/api/AtencionMedica/paciente/${idPaciente}`);
-        const atenciones = await medRes.json();
-
+        
         const container = document.getElementById("patientMedicalCaresContainer");
         const emptyBox = document.getElementById("patientMedicalCaresEmpty");
 
-        if (!atenciones || atenciones.length === 0) {
-            container.innerHTML = '';
+        if (!medRes.ok) {
+            container.innerHTML = "";
             emptyBox.style.display = "block";
         } else {
+            const atenciones = await medRes.json();
             emptyBox.style.display = "none";
 
             atenciones.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
@@ -151,44 +154,79 @@ async function loadPatientDetailDoctor(idPaciente) {
 
             atenciones.forEach((a, index) => {
                 const fechaText = a.fecha ? a.fecha.split("T")[0] : "-";
-                const motivo = a.motivo || "-";
-                const diagnostico = a.diagnostico || "-";
-                const tratamiento = a.tratamiento || "-";
 
                 html += `
-            <div class="care-item" onclick="toggleCareDetail('care${index}')">
-                <div class="care-header">
-                    <div>
-                        <p class="care-motivo">${fechaText} — ${motivo}</p>
-                    </div>
-                    <span id="careArrow${index}" class="care-arrow">▼</span>
-                </div>
+                    <div class="care-item" onclick="toggleCareDetail('care${index}')">
+                        <div class="care-header">
+                            <div>
+                                <p class="care-motivo">${fechaText} — ${a.motivo || "-"}</p>
+                            </div>
+                            <span id="careArrow${index}" class="care-arrow">▼</span>
+                        </div>
 
-                <div id="care${index}" class="care-detail">
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <label>Diagnóstico</label>
-                            <p>${diagnostico}</p>
-                        </div>
-                        <div class="info-item full">
-                            <label>Tratamiento / Observaciones</label>
-                            <p>${tratamiento}</p>
+                        <div id="care${index}" class="care-detail">
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <label>Diagnóstico</label>
+                                    <p>${a.diagnostico || "-"}</p>
+                                </div>
+                                <div class="info-item full">
+                                    <label>Tratamiento / Observaciones</label>
+                                    <p>${a.tratamiento || "-"}</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        `;
+                `;
             });
 
-            html += '</div>';
+            html += "</div>";
             container.innerHTML = html;
         }
 
+
+        // Botón editar
+        const editBtn = document.getElementById("btnEditPatient");
+        if (editBtn) {
+            editBtn.onclick = () => showEditPatientFormDoctor(idPaciente);
+        }
+
+        const createAntecedente = document.getElementById("patientMedicalHistoryEmpty");
+        if (createAntecedente) {
+            createAntecedente.onclick = () => showRegAntecedenteFormDoctor(idPaciente, [p.nombre+" "+p.apellido]);
+        }
 
     } catch (error) {
         console.error("Error cargando expediente médico:", error);
     }
 }
+
+async function showRegAntecedenteFormDoctor(idPaciente, nombre) {
+    try {
+        const res = await fetch('../views/doctor/antecedenteMedico.html');
+        if (!res.ok) throw new Error("No se pudo cargar el formulario.");
+
+        const html = await res.text();
+        document.getElementById('contentDoctor').innerHTML = html;
+
+        const pacienteInput = document.getElementById("historyPatient");
+        if (pacienteInput) {
+            pacienteInput.value = `${idPaciente} - ${nombre}`;
+            pacienteInput.dataset.idPaciente = idPaciente; // guardamos el id real por si lo necesitas al guardar
+        }
+
+        const btnBack = document.getElementById("btnBack");
+        if (btnBack) {
+            btnBack.onclick = () => showPatientDetailDoctor(idPaciente);
+        }
+
+    } catch (error) {
+        console.error('Error cargando formularioAntecedente:', error);
+        document.getElementById('contentDoctor').innerHTML =
+            '<p>Error cargando el formulario de antecedente.</p>';
+    }
+}
+
 
 function toggleCareDetail(id) {
     const el = document.getElementById(id);
@@ -221,7 +259,7 @@ async function loadPatientDetailSecretary(idPaciente) {
         statusSpan.className = p.activo ? "badge badge-active" : "badge badge-inactive";
 
         document.getElementById("btnEditPatient").onclick = () => {
-            showEditPatientForm(idPaciente);
+            showEditPatientFormSecretary(idPaciente);
         };
 
     } catch (error) {
@@ -244,13 +282,16 @@ async function showPatientDetailSecretary(patientId) {
     }
 }
 
-async function showEditPatientForm(idPaciente) {
+async function showEditPatientFormSecretary(idPaciente) {
     try {
         const res = await fetch('../views/secretaria/edit-patient.html');
         const html = await res.text();
         document.getElementById('contentSecretaria').innerHTML = html;
 
         await loadEditPatientForm(idPaciente);
+        document.getElementById("btnBackEdit").onclick = () => {
+            showPatientDetailSecretary(idPaciente);
+        };
 
     } catch (error) {
         console.error("Error cargando vista de edición:", error);
@@ -258,7 +299,7 @@ async function showEditPatientForm(idPaciente) {
 }
 
 
-async function loadEditPatientForm(idPaciente) {
+async function loadEditPatientFormSecretary(idPaciente) {
     try {
         const res = await fetch(`https://localhost:7193/api/Pacientes/${idPaciente}`);
         const p = await res.json();
@@ -281,15 +322,9 @@ async function loadEditPatientForm(idPaciente) {
         document.getElementById("editPatientAddress").value = p.direccion;
         document.getElementById("editPatientEmergency").value = p.contactoEmergencia;
 
-        // ⬅ nuevo
         document.getElementById("editPatientActive").value = p.activo ? "true" : "false";
 
-        // Guardar ID en el form (tu forma actual)
         document.getElementById("editPatientForm").dataset.patientid = idPaciente;
-
-        document.getElementById("btnBackEdit").onclick = () => {
-            showPatientDetailSecretary(idPaciente);
-        };
 
     } catch (error) {
         console.error("Error llenando el formulario:", error);
@@ -326,10 +361,82 @@ async function saveEditedPatient(event) {
         }
 
         alert("Paciente actualizado correctamente");
-        loadView('views/secretaria/patients.html');
 
     } catch (error) {
         console.error("Error guardando cambios:", error);
         alert("Error de conexión con el servidor");
+    }
+}
+
+
+async function showEditPatientFormDoctor(idPaciente) {
+    try {
+        const res = await fetch('../views/doctor/edit-patient.html');
+
+        const html = await res.text();
+
+        document.getElementById('contentDoctor').innerHTML = html;
+
+        loadDoctorEditForm(idPaciente);
+        document.getElementById("btnBackEdit").onclick = () => {
+            showPatientDetailDoctor(idPaciente);
+        };
+
+    } catch (error) {
+        console.error("Error cargando vista de edición:", error);
+    }
+}
+
+async function loadDoctorEditForm(idPaciente) {
+    try {
+        const res = await fetch(`https://localhost:7193/api/Pacientes/${idPaciente}`);
+        if (!res.ok) throw new Error("Error al obtener paciente");
+        const p = await res.json();
+
+        document.getElementById("completeEditName").value = p.nombre || "";
+        document.getElementById("completeEditLastname").value = p.apellido || "";
+        document.getElementById("completeEditCedula").value = p.cedula || "";
+        document.getElementById("completeEditEmail").value = p.email || "";
+        document.getElementById("completeEditPhone").value = p.telefono || "";
+        document.getElementById("completeEditBirthDate").value = p.fecha_Nacimiento?.split("T")[0] || "";
+        document.getElementById("completeEditGender").value = p.sexo || "";
+        document.getElementById("completeEditAddress").value = p.direccion || "";
+        document.getElementById("completeEditEmergency").value = p.contactoEmergencia || "";
+
+
+        const form = document.getElementById("completeEditForm");
+        if (form) form.dataset.patientid = idPaciente;
+
+
+        const antRes = await fetch(`https://localhost:7193/api/AntecedentesMedicos/paciente/${idPaciente}`);
+        if (!antRes.ok) throw new Error("Error al obtener antecedentes");
+        const antecedente = await antRes.json();
+
+        if (!antecedente || antecedente.length === 0) {
+            const noBox = document.getElementById("noAntecedentesBox");
+            const antSection = document.getElementById("antecedentesSection");
+            if (noBox) noBox.style.display = "block";
+            if (antSection) antSection.style.display = "none";
+        } else {
+            const noBox = document.getElementById("noAntecedentesBox");
+            const antSection = document.getElementById("antecedentesSection");
+            if (noBox) noBox.style.display = "none";
+            if (antSection) antSection.style.display = "block";
+
+            document.getElementById("completeEditAllergies").value = antecedente.alergias || "";
+            document.getElementById("completeEditChronic").value = antecedente.enfermedades_Cronicas || "";
+            document.getElementById("completeEditObservations").value = antecedente.observaciones_Generales || "";
+            document.getElementById("completeEditHistoryId").value = antecedente.id_Antecedente || antecedente.iD_Antecedente || "";
+        }
+
+        if (form) {
+            form.onsubmit = saveDoctorEditedPatient;
+        } else {
+            console.warn("No se encontró #completeEditForm");
+        }
+
+    } catch (error) {
+        console.error("Error llenando el formulario de edición (doctor):", error);
+        alert("Error cargando datos del paciente");
     }
 }

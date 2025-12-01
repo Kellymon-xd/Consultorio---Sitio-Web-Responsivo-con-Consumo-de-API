@@ -37,11 +37,23 @@ function showDashboard() {
     document.getElementById("userRole").textContent = roleText;
 
     fetch(filePath)
-        .then(r => r.text())
-        .then(html => {
-            document.getElementById("mainContent").innerHTML = html;
-        })
-        .catch(err => console.error("Error cargando vista:", err));
+    .then(r => r.text())
+    .then(html => {
+        document.getElementById("mainContent").innerHTML = html;
+
+        
+        if (currentUser.id_Rol === 1) {
+            showAdminSection('users');
+        }
+        else if (currentUser.id_Rol === 2) {
+            showDoctorSection('pacientes');
+        }
+        else if (currentUser.id_Rol === 3) {
+            showSecretarySection('pacientes');
+        }
+    })
+    .catch(err => console.error("Error cargando vista:", err));
+
 }
 
 function logout() {
@@ -75,8 +87,8 @@ async function showAdminSection(section) {
         case 'registerUser':
             filePath = '../views/admin/register-user.html';
             break;
-        case 'statistics':
-            filePath = '../views/admin/statistics.html';
+        case 'stadistics':
+            filePath = '../views/admin/stadistics.html';
             break;
         default:
             return;
@@ -152,9 +164,6 @@ async function showDoctorSection(section) {
             break;
         case 'regAtencionMedica':
             filePath = '../views/doctor/atencionMedica.html';
-            break;
-        case 'regAntecedenteMedico':
-            filePath = '../views/doctor/antecedenteMedico.html';
             break;
         default:
             return;

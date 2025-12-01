@@ -246,6 +246,14 @@ body {
     margin-bottom: 20px;
 }
 
+/* Separador de secciones de formularios */
+.section-divider {
+    margin: 30px 0 20px 0 !important;
+    color: #667eea !important;
+    border-bottom: 2px solid rgba(102, 126, 234, 0.3) !important;
+    padding-bottom: 10px !important;
+}
+
 .info-medica {
     margin-top: 30px;
     text-align: center;

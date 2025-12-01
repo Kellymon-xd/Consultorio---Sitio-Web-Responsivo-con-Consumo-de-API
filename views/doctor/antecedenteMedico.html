@@ -1,14 +1,14 @@
 <div id="doctorMedicalHistory" class="section">
-    <h3>Registrar Antecedente Médico</h3>
+    <button id="btnBack" class="back-btn">← Volver</button>
+
+    <h3 class="section-title">Registrar Antecedente Médico</h3>
 
     <form id="medicalHistoryForm" onsubmit="saveMedicalHistory(event)">
 
         <div class="form-row">
             <div class="form-group">
                 <label for="historyPatient">Paciente</label>
-                <select id="historyPatient" required>
-                    <option value="">-- Seleccionar --</option>
-                </select>
+                <input type="text" id="historyPatient" readonly>
             </div>
         </div>
 
@@ -33,6 +33,8 @@
             </div>
         </div>
 
-        <button type="submit" class="btn btn-primary mt-20">Registrar Antecedente</button>
+        <button type="submit" class="btn btn-primary mt-20">
+            Registrar Antecedente
+        </button>
     </form>
 </div>

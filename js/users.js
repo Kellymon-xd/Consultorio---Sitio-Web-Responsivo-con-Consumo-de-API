@@ -192,13 +192,7 @@ async function editUserDetail(userId, medicoId, roleId) {
 
         // ====== BOTÓN VOLVER ======
         document.getElementById('btnBackEdit').onclick = async () => {
-            const detailHtmlRes = await fetch('../views/admin/userDetail.html');
-            const detailHtml = await detailHtmlRes.text();
-
-            const container = document.getElementById('contentAdmin');
-            container.innerHTML = detailHtml;
-
-            loadUserDetail(userId);
+            showUserDetail(userId)
         };
 
     } catch (error) {
@@ -415,13 +409,4 @@ async function saveEditedUser(userId, medicoId, roleId) {
     }
 
     alert("Cambios guardados ✔");
-
-
-    const detailHtmlRes = await fetch('../views/admin/userDetail.html');
-    const detailHtml = await detailHtmlRes.text();
-
-    const container = document.getElementById('contentAdmin');
-    container.innerHTML = detailHtml;
-
-    loadUserDetail(userId);
 }
