@@ -339,7 +339,6 @@ async function saveNewUser(event) {
 
     const rol = document.getElementById("newUserRole").value;
 
-    // ← Datos básicos
     const baseData = {
         nombre: document.getElementById("newUserName").value,
         apellido: document.getElementById("newUserLastname").value,
@@ -349,9 +348,9 @@ async function saveNewUser(event) {
         contrasena: document.getElementById("newUserPassword").value
     };
 
-    // -------------------------
-    // CASO 1 → Usuario normal
-    // -------------------------
+    // ============================
+    // USUARIO NORMAL (rol ≠ 2)
+    // ============================
     if (rol != 2) {
         const body = {
             ...baseData,
@@ -365,7 +364,10 @@ async function saveNewUser(event) {
                 body: JSON.stringify(body)
             });
 
+            const data = await res.json();
+
             if (res.ok) {
+                console.log("ID generado:", data.idUsuario);
                 alert("Usuario registrado con éxito");
                 event.target.reset();
             } else {
@@ -379,41 +381,63 @@ async function saveNewUser(event) {
         return;
     }
 
-    // -------------------------
-    // CASO 2 → Médico
-    // -------------------------
-    const specialty = document.getElementById("doctorSpecialty").value;
-    const schedule = document.getElementById("doctorSchedule").value;
-    const consultPhone = document.getElementById("doctorConsultPhone").value;
-    const contract= document.getElementById("doctorContract").value;
+    // ============================
+    // USUARIO MÉDICO (rol = 2)
+    // ============================
+    if (rol == 2) {
+        const body = {
+            ...baseData,
+            idRol: 2
+        };
 
-    const doctorBody = {
-        ...baseData,
-        iD_Especialidad: parseInt(specialty),
-        iD_Contrato: contract,                
-        horario_Atencion: schedule,
-        telefono_Consulta: consultPhone
-    };
+        try {
+            const resUser = await fetch("https://localhost:7193/api/Usuarios", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
 
-    try {
-        const res = await fetch("https://localhost:7193/api/Medicos", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(doctorBody)
-        });
+            const dataUser = await resUser.json();
 
-        if (res.ok) {
-            alert("Médico registrado con éxito");
-            event.target.reset();
-            document.getElementById("doctorFields").style.display = "none";
-        } else {
-            alert("Error al registrar médico");
+            if (!resUser.ok) {
+                alert("Error al registrar usuario");
+                return;
+            }
+
+            const idGenerado = dataUser.idUsuario;
+            console.log("ID USUARIO GENERADO:", idGenerado);
+
+            const medicoData = {
+                id_Usuario: idGenerado,
+                iD_Especialidad: document.getElementById("doctorSpecialty").value,
+                iD_Contrato: document.getElementById("doctorContract").value,
+                horario_Atencion: document.getElementById("doctorSchedule").value,
+                telefono_Consulta: document.getElementById("doctorConsultPhone").value
+            };
+
+            console.log("OBJETO FINAL medicoData:", medicoData);
+
+            const resMedico = await fetch("https://localhost:7193/api/Medicos", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(medicoData)
+            });
+
+            if (resMedico.ok) {
+                alert("Médico registrado con éxito");
+                event.target.reset();
+            } else {
+                const errorTxt = await resMedico.text();
+                console.error("Error respuesta servidor:", errorTxt);
+                alert("Error al registrar médico");
+            }
+
+        } catch (error) {
+            console.error("Error:", error);
         }
-
-    } catch (error) {
-        console.error("Error:", error);
     }
 }
+
 
 async function saveEditedUser(userId, medicoId, roleId) {
 
