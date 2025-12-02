@@ -42,7 +42,8 @@ async function loadUsersList() {
                     <td>${lockBadge}</td>
                     <td>
                         <button class="btn-action btn-view" onclick="showUserDetail('${user.id_Usuario}')">Detalle</button>
-                        <button class="btn-action btn-delete" onclick="toggleUserStatus('${user.id_Usuario}')">${user.activo ? 'Inactivar' : 'Activar'}</button>
+                        <button class="btn-action btn-delete" onclick="toggleUserStatus('${user.id_Usuario}', ${user.activo})">${user.activo ? 'Inactivar' : 'Activar'}</button>
+                        <button class="btn-action btn-edit" onclick="toggleUserBlock('${user.id_Usuario}', ${user.bloqueado})">${user.bloqueado ? 'Desbloquear' : 'Bloquear'}</button>
                     </td>
                 </tr>
             `;
@@ -53,6 +54,44 @@ async function loadUsersList() {
     } catch (error) {
         console.error(error);
         usersList.innerHTML = '<tr><td colspan="7">Error cargando usuarios</td></tr>';
+    }
+}
+
+// ACTIVAR / INACTIVAR
+async function toggleUserStatus(id, estadoActual) {
+    const nuevoEstado = !estadoActual;
+
+    try {
+        const res = await fetch(`https://localhost:7193/api/Usuarios/${id}/activo`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(nuevoEstado)
+        });
+
+        if (!res.ok) return console.error("Error cambiando estado activo/inactivo");
+
+        loadUsersList();
+    } catch (e) {
+        console.error("toggleUserStatus error:", e);
+    }
+}
+
+// BLOQUEAR / DESBLOQUEAR
+async function toggleUserBlock(id, estadoActual) {
+    const nuevoEstado = !estadoActual;
+
+    try {
+        const res = await fetch(`https://localhost:7193/api/Usuarios/${id}/bloqueado`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(nuevoEstado)
+        });
+
+        if (!res.ok) return console.error("Error cambiando estado de bloqueo");
+
+        loadUsersList();
+    } catch (e) {
+        console.error("toggleUserBlock error:", e);
     }
 }
 

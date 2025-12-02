@@ -87,9 +87,6 @@ async function showAdminSection(section) {
         case 'registerUser':
             filePath = '../views/admin/register-user.html';
             break;
-        case 'stadistics':
-            filePath = '../views/admin/stadistics.html';
-            break;
         default:
             return;
     }
