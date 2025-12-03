@@ -137,17 +137,22 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 .navbar h2 {
     color: #333;
     margin: 0;
+    flex: 1 1 auto;
+    min-width: 200px;
 }
 
 .navbar-user {
     display: flex;
     align-items: center;
     gap: 15px;
+    flex-wrap: wrap;
 }
 
 .user-info {
@@ -163,6 +168,7 @@ body {
     border-radius: 5px;
     cursor: pointer;
     font-weight: 600;
+    white-space: nowrap;
 }
 
 .btn-logout:hover {
@@ -174,6 +180,8 @@ body {
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .section {
@@ -184,7 +192,6 @@ body {
     margin-top: 35px; 
     margin-bottom: 15px;
 }
-
 
 .btn-menu {
     display: inline-block;
@@ -239,14 +246,15 @@ body {
     transform: translateY(-1px);
 }
 
-.encabezado-conboton{
+.encabezado-conboton {
     display: flex; 
     justify-content: space-between; 
     align-items: center; 
     margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
-/* Separador de secciones de formularios */
 .section-divider {
     margin: 30px 0 20px 0 !important;
     color: #667eea !important;
@@ -302,7 +310,6 @@ body {
     background: rgba(255, 255, 255, 0.9);
 }
 
-/* Contenedor de detalle que se abre/cierra */
 .care-detail {
     display: none;
     margin-top: 15px;
@@ -310,16 +317,18 @@ body {
     border-top: 2px solid rgba(225, 232, 237, 0.5);
 }
 
-/* Header con fecha y motivo */
 .care-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .care-arrow {
     font-size: 18px;
     transition: transform .2s ease;
+    flex-shrink: 0;
 }
 
 .care-arrow.open {
@@ -411,6 +420,7 @@ table tr:hover {
     width: 100%;
     height: 100%;
     background: rgba(0,0,0,0.5);
+    overflow-y: auto;
 }
 
 .modal-content {
@@ -519,7 +529,6 @@ table tr:hover {
     font-style: italic;
 }
 
-
 /* ===== TEXTAREA ===== */
 textarea {
     width: 100%;
@@ -556,6 +565,7 @@ h4 {
     cursor: pointer;
     transition: all 0.3s ease;
     min-width: 120px;
+    font-weight: 600;
 }
 
 .status-select:hover {
@@ -568,77 +578,22 @@ h4 {
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
-/* Estilos específicos para cada estado en el combobox */
-.status-select option[value="Pendiente"] {
-    background-color: #fff3cd;
-    color: #856404;
+.status-pendiente {
+    background-color: #fff3cd !important;
+    color: #856404 !important;
+    border-color: #ffc107 !important;
 }
 
-.status-select option[value="Confirmada"] {
-    background-color: #d4edda;
-    color: #155724;
+.status-confirmada {
+    background-color: #d4edda !important;
+    color: #155724 !important;
+    border-color: #28a745 !important;
 }
 
-.status-select option[value="Cancelada"] {
-    background-color: #f8d7da;
-    color: #721c24;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
-    .container {
-        padding: 10px;
-    }
-    
-    .navbar {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-    }
-    
-    .navbar-user {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-    
-    .info-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .main-content {
-        padding: 20px;
-    }
-    
-    table {
-        font-size: 14px;
-    }
-    
-    table th,
-    table td {
-        padding: 8px 10px;
-    }
-    
-    .btn-action {
-        display: block;
-        width: 100%;
-        margin-bottom: 5px;
-    }
-
-    .statistics-container {
-        grid-template-columns: 1fr;
-    }
-
-    .charts-container {
-        grid-template-columns: 1fr;
-    }
-
-    .chart-wrapper {
-        height: 250px;
-    }
+.status-cancelada {
+    background-color: #f8d7da !important;
+    color: #721c24 !important;
+    border-color: #dc3545 !important;
 }
 
 /* ===== UTILIDADES ===== */
@@ -686,113 +641,277 @@ h4 {
     animation: fadeIn 0.3s ease;
 }
 
-/* ===== PIE CHART ===== */
-.pie-chart-wrapper {
-    position: relative;
-    height: 300px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+/* ===== RESPONSIVE - TABLET (768px) ===== */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .login-box {
+        padding: 30px 20px;
+    }
+
+    .navbar {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .navbar h2 {
+        width: 100%;
+        text-align: center;
+        min-width: auto;
+    }
+    
+    .navbar-user {
+        width: 100%;
+        justify-content: center;
+        flex-direction: row;
+    }
+
+    .user-info {
+        text-align: center;
+    }
+    
+    .main-content {
+        padding: 15px;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .info-item.full {
+        grid-column: 1 / -1;
+    }
+    
+    table {
+        font-size: 13px;
+        width: 100%;
+    }
+    
+    table th,
+    table td {
+        padding: 10px 6px;
+    }
+
+    table th {
+        font-size: 12px;
+    }
+    
+    .btn-action {
+        display: block;
+        width: 100%;
+        margin-bottom: 8px;
+        padding: 10px 8px;
+        font-size: 12px;
+    }
+
+    .care-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .care-arrow {
+        align-self: flex-end;
+        margin-top: 10px;
+    }
+
+    .care-item {
+        padding: 15px;
+    }
+
+    .encabezado-conboton {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .encabezado-conboton > * {
+        width: 100%;
+    }
+
+    h3 {
+        font-size: 20px;
+    }
+
+    h4 {
+        font-size: 16px;
+    }
+
+    .badge {
+        min-width: 70px;
+        font-size: 11px;
+        padding: 5px 10px;
+    }
+
+    .perf-value {
+        font-size: 20px;
+    }
+
+    .pie-chart-wrapper {
+        height: 250px;
+    }
+
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+        padding: 20px;
+    }
 }
 
-.pie-chart-container {
-    width: 100%;
-    height: 100%;
-    position: relative;
+/* ===== RESPONSIVE - MÓVIL PEQUEÑO (600px) ===== */
+@media (max-width: 600px) {
+    table {
+        font-size: 11px;
+        width: 100%;
+    }
+
+    table th,
+    table td {
+        padding: 8px 4px;
+    }
+
+    table th {
+        font-size: 10px;
+    }
+
+    .btn-action {
+        display: block;
+        width: 100%;
+        padding: 10px 4px;
+        margin-bottom: 5px;
+        font-size: 11px;
+    }
 }
 
-.stats-section {
-    margin-bottom: 40px;
-}
+/* ===== RESPONSIVE - MÓVIL (480px) ===== */
+@media (max-width: 480px) {
+    .container {
+        padding: 5px;
+    }
 
-.stats-section-title {
-    font-size: 20px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #667eea;
-}
+    .login-box {
+        padding: 20px;
+        margin: 10px;
+    }
 
-/* ===== PERFORMANCE STATS ===== */
-.performance-stat {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid #eee;
-}
+    .login-box h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
 
-.performance-stat:last-child {
-    border-bottom: none;
-}
+    .navbar {
+        padding: 15px 10px;
+        gap: 10px;
+    }
 
-.perf-label {
-    font-weight: 600;
-    color: #666;
-    font-size: 14px;
-}
+    .navbar h2 {
+        font-size: 18px;
+    }
 
-.perf-value {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-}
+    .navbar-user {
+        gap: 8px;
+        font-size: 13px;
+    }
 
-/* Estilos para el combobox de estados con colores */
-.status-select {
-    padding: 6px 10px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    font-size: 14px;
-    background-color: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    min-width: 120px;
-    font-weight: 600;
-}
+    .btn-logout {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
 
-.status-select:hover {
-    border-color: #007bff;
-}
+    .main-content {
+        padding: 10px;
+        border-radius: 8px;
+    }
 
-.status-select:focus {
-    outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-}
+    .btn-menu {
+        display: block;
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 8px;
+        padding: 12px;
+        font-size: 14px;
+    }
 
-/* Colores para cada estado */
-.status-pendiente {
-    background-color: #fff3cd !important;
-    color: #856404 !important;
-    border-color: #ffc107 !important;
-}
+    .form-group input,
+    .form-group select {
+        padding: 10px;
+        font-size: 16px;
+    }
 
-.status-confirmada {
-    background-color: #d4edda !important;
-    color: #155724 !important;
-    border-color: #28a745 !important;
-}
+    h3 {
+        font-size: 18px;
+        margin-bottom: 15px;
+    }
 
-.status-cancelada {
-    background-color: #f8d7da !important;
-    color: #721c24 !important;
-    border-color: #dc3545 !important;
-}
+    .badge {
+        min-width: 60px;
+        font-size: 10px;
+        padding: 4px 8px;
+    }
 
-/* Estilos específicos para cada estado en el combobox (opciones) */
-.status-select option[value="Pendiente"] {
-    background-color: #fff3cd;
-    color: #856404;
-}
+    .info-grid {
+        gap: 10px;
+    }
 
-.status-select option[value="Confirmada"] {
-    background-color: #d4edda;
-    color: #155724;
-}
+    .info-item {
+        padding: 10px;
+    }
 
-.status-select option[value="Cancelada"] {
-    background-color: #f8d7da;
-    color: #721c24;
+    .care-item {
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+
+    .care-header {
+        gap: 5px;
+    }
+
+    .care-arrow {
+        font-size: 16px;
+    }
+
+    .perf-label {
+        font-size: 12px;
+    }
+
+    .perf-value {
+        font-size: 18px;
+    }
+
+    .pie-chart-wrapper {
+        height: 200px;
+    }
+
+    .modal-content {
+        width: 98%;
+        margin: 20% auto;
+        padding: 15px;
+    }
+
+    .close-modal {
+        font-size: 24px;
+    }
+
+    .section-divider {
+        margin: 20px 0 15px 0 !important;
+        padding-bottom: 8px !important;
+    }
+
+    .info-medica {
+        padding: 15px;
+        margin: 15px 0;
+    }
+
+    textarea {
+        min-height: 70px;
+        padding: 8px;
+    }
+
+    .performance-stat {
+        padding: 10px 0;
+    }
 }

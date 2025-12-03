@@ -21,11 +21,11 @@ async function loadSecrePatientsList() {
 
             html += `
                 <tr>
-                    <td>${patient.cedula}</td>
-                    <td>${patient.nombreCompleto}</td>
-                    <td>${patient.email || '-'}</td>
-                    <td><span class="badge ${stateClass}">${stateBadge}</span></td>
-                    <td>
+                    <td data-label="Cedula">${patient.cedula}</td>
+                    <td data-label="Nombre">${patient.nombreCompleto}</td>
+                    <td data-label="Email">${patient.email || '-'}</td>
+                    <td data-label="Estado"><span class="badge ${stateClass}">${stateBadge}</span></td>
+                    <td data-label="Acciones">
                         <button class="btn-action btn-view" onclick="showPatientDetailSecretary(${patient.id_Paciente})">Ver Detalle</button>
                     </td>
                 </tr>
@@ -63,11 +63,11 @@ async function loadDocPatientsList() {
 
             html += `
                 <tr>
-                    <td>${patient.cedula}</td>
-                    <td>${patient.nombreCompleto}</td>
-                    <td>${patient.email || '-'}</td>
-                    <td><span class="badge ${stateClass}">${stateBadge}</span></td>
-                    <td>
+                    <td data-label="Cedula">${patient.cedula}</td>
+                    <td data-label="Nombre">${patient.nombreCompleto}</td>
+                    <td data-label="Email">${patient.email || '-'}</td>
+                    <td data-label="Telefono">${patient.telefono || '-'}</td>
+                    <td data-label="Acciones">
                         <button class="btn-action btn-view" onclick="showPatientDetailDoctor(${patient.id_Paciente})">Ver Expediente</button>
                     </td>
                 </tr>
