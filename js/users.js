@@ -4,13 +4,13 @@ async function loadUsersList() {
     const noUsersMessage = document.getElementById('noUsersMessage');
 
     try {
-        const rolesRes = await fetch('https://localhost:7193/api/Rol');
+        const rolesRes = await fetch(URLBASE+'Rol');
         const roles = await rolesRes.json();
         const rolesMap = {};
         roles.forEach(r => rolesMap[r.id_Rol] = r.descripcion_Rol);
 
 
-        const usersRes = await fetch('https://localhost:7193/api/Usuarios');
+        const usersRes = await fetch(URLBASE+'Usuarios');
         const users = await usersRes.json();
 
         if (users.length === 0) {
@@ -62,7 +62,7 @@ async function toggleUserStatus(id, estadoActual) {
     const nuevoEstado = !estadoActual;
 
     try {
-        const res = await fetch(`https://localhost:7193/api/Usuarios/${id}/activo`, {
+        const res = await fetch(URLBASE+`Usuarios/${id}/activo`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(nuevoEstado)
@@ -81,7 +81,7 @@ async function toggleUserBlock(id, estadoActual) {
     const nuevoEstado = !estadoActual;
 
     try {
-        const res = await fetch(`https://localhost:7193/api/Usuarios/${id}/bloqueado`, {
+        const res = await fetch(URLBASE+`Usuarios/${id}/bloqueado`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(nuevoEstado)
@@ -98,11 +98,11 @@ async function toggleUserBlock(id, estadoActual) {
 async function loadUserDetail(userId) {
     try {
         // Traer datos del usuario
-        const res = await fetch(`https://localhost:7193/api/Usuarios/${userId}`);
+        const res = await fetch(URLBASE+`Usuarios/${userId}`);
         const user = await res.json();
 
         // Traer nombre rol
-        const rolRes = await fetch(`https://localhost:7193/api/Rol/${user.id_Rol}`);
+        const rolRes = await fetch(URLBASE+`Rol/${user.id_Rol}`);
         const rol = await rolRes.json();
 
         // Llenar datos básicos
@@ -124,11 +124,11 @@ async function loadUserDetail(userId) {
             const medicoId = user.ID_Medico; // <-- EL ID REAL DEL MÉDICO
 
             // Traer nombre especialidad
-            const espRes = await fetch(`https://localhost:7193/api/Especialidades/${user.ID_Especialidad}`);
+            const espRes = await fetch(URLBASE+`Especialidades/${user.ID_Especialidad}`);
             const especialidades = await espRes.json();
 
             // Traer contrato
-            const contRes = await fetch(`https://localhost:7193/api/TipoContrato/${user.ID_Contrato}`);
+            const contRes = await fetch(URLBASE+`TipoContrato/${user.ID_Contrato}`);
             const contrato = await contRes.json();
 
             doctorFields.forEach(f => f.style.display = "grid");
@@ -189,7 +189,7 @@ async function showUserDetail(userId) {
 
 async function editUserDetail(userId, medicoId, roleId) {
     try {
-        const res = await fetch(`https://localhost:7193/api/Usuarios/${userId}`);
+        const res = await fetch(URLBASE+`Usuarios/${userId}`);
         const user = await res.json();
 
         const editHtmlRes = await fetch('../views/admin/edit-user.html');
@@ -246,7 +246,7 @@ async function editUserDetail(userId, medicoId, roleId) {
 // ===============================
 async function loadRoles() {
     try {
-        const res = await fetch("https://localhost:7193/api/Rol");
+        const res = await fetch(URLBASE+"Rol");
         const data = await res.json();
 
         const select = document.getElementById("newUserRole");
@@ -284,7 +284,7 @@ async function updateRoleFields() {
 // ====================================
 async function loadStates(elementId) {
     try {
-        const res = await fetch("https://localhost:7193/api/Especialidades/combo");
+        const res = await fetch(URLBASE+"Especialidades/combo");
         const data = await res.json();
 
         const select = document.getElementById(elementId);
@@ -310,7 +310,7 @@ async function loadStates(elementId) {
 // ====================================
 async function loadContracts(elementId) {
     try {
-        const res = await fetch("https://localhost:7193/api/TipoContrato");
+        const res = await fetch(URLBASE+"TipoContrato");
         const data = await res.json();
 
         const select = document.getElementById(elementId);
@@ -358,7 +358,7 @@ async function saveNewUser(event) {
         };
 
         try {
-            const res = await fetch("https://localhost:7193/api/Usuarios", {
+            const res = await fetch(URLBASE+"Usuarios", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body)
@@ -391,7 +391,7 @@ async function saveNewUser(event) {
         };
 
         try {
-            const resUser = await fetch("https://localhost:7193/api/Usuarios", {
+            const resUser = await fetch(URLBASE+"Usuarios", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body)
@@ -448,7 +448,7 @@ async function saveEditedUser(userId, medicoId, roleId) {
         telefono: document.getElementById('editUserPhone').value
     };
 
-    await fetch(`https://localhost:7193/api/Usuarios/${userId}`, {
+    await fetch(URLBASE+`Usuarios/${userId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userBody)

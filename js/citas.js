@@ -1,12 +1,13 @@
+/* SCRIP DE LAS VISTAS DE ADMIN PARA LA GESTIÓN DE CITAS MEDICAS DE PACIENTES */
 async function loadSecretaryCitasList() {
     const secretaryCitasList = document.getElementById('secretaryCitasList');
     const noCitasMessage = document.getElementById('noCitasMessage');
 
     try {
-        const citasRes = await fetch('https://localhost:7193/api/Citas');
+        const citasRes = await fetch(URLBASE+'Citas');
         const citas = await citasRes.json();
 
-        const stateRes = await fetch('https://localhost:7193/api/EstadoCita');
+        const stateRes = await fetch(URLBASE+'EstadoCita');
         const states = await stateRes.json();
 
         if (citas.length === 0) {
@@ -65,7 +66,7 @@ async function updateAppointmentStatus(idCita, newEstado) {
             iD_Estado_Cita: parseInt(newEstado)
         };
 
-        const res = await fetch(`https://localhost:7193/api/Citas/${idCita}/estado`, {
+        const res = await fetch(URLBASE+`Citas/${idCita}/estado`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body)
@@ -89,7 +90,7 @@ async function updateAppointmentStatus(idCita, newEstado) {
 // ====================================
 async function loadMedicos(elementId) {
     try {
-        const res = await fetch("https://localhost:7193/api/Medicos/combo");
+        const res = await fetch(URLBASE+"Medicos/combo");
         const data = await res.json();
 
         const select = document.getElementById(elementId);
@@ -119,7 +120,7 @@ async function loadMedicos(elementId) {
 // ====================================
 async function loadPacientes(elementId) {
     try {
-        const res = await fetch("https://localhost:7193/api/Pacientes/combo");
+        const res = await fetch(URLBASE+"Pacientes/combo");
         const data = await res.json();
 
         const select = document.getElementById(elementId);
@@ -148,7 +149,7 @@ async function loadPacientes(elementId) {
 // ====================================
 async function loadCitasParaAtencion(elementId) {
     try {
-        const res = await fetch("https://localhost:7193/api/Citas/para-atencionMedica");
+        const res = await fetch(URLBASE+"Citas/para-atencionMedica");
         const data = await res.json();
 
         const select = document.getElementById(elementId);
@@ -196,10 +197,10 @@ async function loadDoctorAppointments() {
             return;
         }
 
-        const res = await fetch(`https://localhost:7193/api/Citas/medico/${idMedico}`);
+        const res = await fetch(URLBASE+`Citas/medico/${idMedico}`);
         const citas = await res.json();
 
-        const stateRes = await fetch('https://localhost:7193/api/EstadoCita');
+        const stateRes = await fetch(URLBASE+'EstadoCita');
         const states = await stateRes.json();
 
         const stateMap = {};
@@ -268,7 +269,7 @@ async function saveNewAppointment(event) {
 
         console.log("Enviando POST cita:", body);
 
-        const res = await fetch('https://localhost:7193/api/Citas', {
+        const res = await fetch(URLBASE+'Citas', {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body)
@@ -291,4 +292,3 @@ async function saveNewAppointment(event) {
         alert("Error registrando cita");
     }
 }
-

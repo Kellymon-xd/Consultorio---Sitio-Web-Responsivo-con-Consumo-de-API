@@ -1,9 +1,10 @@
+/* SCRIP DE LAS VISTAS DE ADMIN PARA LA GESTIÓN DE PACIENTES */
 async function loadSecrePatientsList() {
     const secretaryPatientsList = document.getElementById('secretaryPatientsList');
     const noPatientsMessage = document.getElementById('noPatientsMessage');
 
     try {
-        const pacientesRes = await fetch('https://localhost:7193/api/Pacientes');
+        const pacientesRes = await fetch(URLBASE+'Pacientes');
         const pacientes = await pacientesRes.json();
 
         if (pacientes.length === 0) {
@@ -45,7 +46,7 @@ async function loadDocPatientsList() {
     const noPatientsMessage = document.getElementById('noPatientsMessage');
 
     try {
-        const pacientesRes = await fetch('https://localhost:7193/api/Pacientes');
+        const pacientesRes = await fetch(URLBASE+'Pacientes');
         const pacientes = await pacientesRes.json();
 
         if (pacientes.length === 0) {
@@ -98,7 +99,7 @@ async function showPatientDetailDoctor(idPaciente) {
 
 async function loadPatientDetailDoctor(idPaciente) {
     try {
-        const pRes = await fetch(`https://localhost:7193/api/Pacientes/${idPaciente}`);
+        const pRes = await fetch(URLBASE+`Pacientes/${idPaciente}`);
         const paciente = await pRes.json();
 
         document.getElementById("patientDetailId").textContent = paciente.iD_Paciente;
@@ -114,7 +115,7 @@ async function loadPatientDetailDoctor(idPaciente) {
 
 
         // ----- ANTECEDENTES -----
-        const antRes = await fetch(`https://localhost:7193/api/AntecedentesMedicos/paciente/${idPaciente}`);
+        const antRes = await fetch(URLBASE+`AntecedentesMedicos/paciente/${idPaciente}`);
         let antecedente = null;
 
         const antBox = document.getElementById("patientMedicalHistoryBox");
@@ -135,7 +136,7 @@ async function loadPatientDetailDoctor(idPaciente) {
         }
 
         // ----- ATENCIONES -----
-        const medRes = await fetch(`https://localhost:7193/api/AtencionMedica/paciente/${idPaciente}`);
+        const medRes = await fetch(URLBASE+`AtencionMedica/paciente/${idPaciente}`);
 
         const container = document.getElementById("patientMedicalCaresContainer");
         const emptyBox = document.getElementById("patientMedicalCaresEmpty");
@@ -240,7 +241,7 @@ function toggleCareDetail(id) {
 
 async function loadPatientDetailSecretary(idPaciente) {
     try {
-        const res = await fetch(`https://localhost:7193/api/Pacientes/${idPaciente}`);
+        const res = await fetch(URLBASE+`Pacientes/${idPaciente}`);
         const p = await res.json();
 
         document.getElementById("patientDetailName").textContent = p.nombre;
@@ -344,7 +345,7 @@ async function saveEditedPatient(event) {
     };
 
     try {
-        const res = await fetch(`https://localhost:7193/api/Pacientes/${idPaciente}`, {
+        const res = await fetch(URLBASE+`Pacientes/${idPaciente}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body)
@@ -445,7 +446,7 @@ async function saveDoctorEditedPatient(idPaciente, idAntecedente) {
 
         console.log("Enviando PUT paciente:", patientBody);
 
-        const updatePatientRes = await fetch(`https://localhost:7193/api/Pacientes/${idPaciente}`, {
+        const updatePatientRes = await fetch(URLBASE+`Pacientes/${idPaciente}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(patientBody)
@@ -469,7 +470,7 @@ async function saveDoctorEditedPatient(idPaciente, idAntecedente) {
 
             console.log("Enviando PUT antecedente:", antecedenteBody);
 
-            const resHist = await fetch(`https://localhost:7193/api/AntecedentesMedicos/${idAntecedente}`, {
+            const resHist = await fetch(URLBASE+`AntecedentesMedicos/${idAntecedente}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(antecedenteBody)
@@ -519,7 +520,7 @@ async function saveMedicalCare(event) {
 
 
     try {
-        const res = await fetch("https://localhost:7193/api/AtencionMedica", {
+        const res = await fetch(URLBASE+"AtencionMedica", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body)
@@ -572,7 +573,7 @@ async function saveMedicalHistory(event) {
 
 
     try {
-        const res = await fetch("https://localhost:7193/api/AntecedentesMedicos", {
+        const res = await fetch(URLBASE+"AntecedentesMedicos", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body)
@@ -633,7 +634,7 @@ async function saveNewPatient(event) {
     };
 
     try {
-        const res = await fetch('https://localhost:7193/api/Pacientes', {
+        const res = await fetch(URLBASE+'Pacientes', {
             method: 'POST',
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newPatient)

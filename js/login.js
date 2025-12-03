@@ -8,7 +8,7 @@ async function login(e) {
     alertDiv.style.display = "none";
 
     try {
-        const resp = await fetch("https://localhost:7193/api/Usuarios/login", {
+        const resp = await fetch(URLBASE+"Usuarios/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, contrasena })
