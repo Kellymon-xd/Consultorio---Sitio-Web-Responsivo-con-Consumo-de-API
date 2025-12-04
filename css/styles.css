@@ -621,6 +621,42 @@ h4 {
     border-radius: 5px;
 }
 
+/* ===== TIPOGRAFÍA FLUIDA PROFESIONAL ===== */
+
+body, p, span, td, input, select, label,
+.user-info, .info-item, .main-content, .navbar-user,
+.form-group input, .form-group select {
+    font-size: clamp(14px, 1.6vw, 17px);
+}
+
+/* Encabezados */
+h1 {
+    font-size: clamp(26px, 4.2vw, 34px);
+}
+
+h2 {
+    font-size: clamp(22px, 3.8vw, 28px);
+}
+
+h3 {
+    font-size: clamp(20px, 3.2vw, 24px);
+}
+
+h4 {
+    font-size: clamp(18px, 2.8vw, 20px);
+}
+
+/* Botones y textos pequeños */
+.btn-action,
+.btn-menu,
+.navbar-user,
+.badge,
+.status-select,
+.perf-label,
+.no-data {
+    font-size: clamp(12px, 2.2vw, 15px);
+}
+
 /* ===== ANIMACIONES ===== */
 @keyframes fadeIn {
     from {
@@ -641,8 +677,21 @@ h4 {
     animation: fadeIn 0.3s ease;
 }
 
-/* ===== RESPONSIVE - TABLET (768px) ===== */
-@media (max-width: 768px) {
+@media(max-width:1000px){
+    table {
+        font-size: 13px;
+        width: 100%;
+    }
+    
+    table th,
+    table td {
+        padding: 10px 6px;
+    }
+
+    table th {
+        font-size: 12px;
+    }
+
     .container {
         padding: 10px;
     }
@@ -676,30 +725,13 @@ h4 {
         padding: 15px;
     }
     
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-    
+    .form-row,
     .info-grid {
         grid-template-columns: 1fr;
     }
 
     .info-item.full {
         grid-column: 1 / -1;
-    }
-    
-    table {
-        font-size: 13px;
-        width: 100%;
-    }
-    
-    table th,
-    table td {
-        padding: 10px 6px;
-    }
-
-    table th {
-        font-size: 12px;
     }
     
     .btn-action {
@@ -733,17 +765,8 @@ h4 {
         width: 100%;
     }
 
-    h3 {
-        font-size: 20px;
-    }
-
-    h4 {
-        font-size: 16px;
-    }
-
     .badge {
         min-width: 70px;
-        font-size: 11px;
         padding: 5px 10px;
     }
 
@@ -762,21 +785,8 @@ h4 {
     }
 }
 
-/* ===== RESPONSIVE - MÓVIL PEQUEÑO (600px) ===== */
-@media (max-width: 600px) {
-    table {
-        font-size: 11px;
-        width: 100%;
-    }
-
-    table th,
-    table td {
-        padding: 8px 4px;
-    }
-
-    table th {
-        font-size: 10px;
-    }
+/* ===== RESPONSIVE - MÓVIL MEDIANO (600px) ===== */
+@media (max-width: 750px) {
 
     .btn-action {
         display: block;
@@ -785,10 +795,41 @@ h4 {
         margin-bottom: 5px;
         font-size: 11px;
     }
+
+    /* TABLA RESPONSIVE */
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+
+    thead {
+        display: none;
+    }
+
+    tr {
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 10px;
+        background: #fff;
+    }
+
+    td {
+        padding: 10px 15px;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid #eee;
+    }
+
+    td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #333;
+    }
 }
 
-/* ===== RESPONSIVE - MÓVIL (480px) ===== */
+/* ===== RESPONSIVE - MÓVIL PEQUEÑO (480px) ===== */
 @media (max-width: 480px) {
+
     .container {
         padding: 5px;
     }
@@ -833,24 +874,12 @@ h4 {
         margin-right: 0;
         margin-bottom: 8px;
         padding: 12px;
-        font-size: 14px;
     }
 
     .form-group input,
     .form-group select {
         padding: 10px;
         font-size: 16px;
-    }
-
-    h3 {
-        font-size: 18px;
-        margin-bottom: 15px;
-    }
-
-    .badge {
-        min-width: 60px;
-        font-size: 10px;
-        padding: 4px 8px;
     }
 
     .info-grid {
@@ -872,6 +901,11 @@ h4 {
 
     .care-arrow {
         font-size: 16px;
+    }
+
+    .badge {
+        min-width: 60px;
+        padding: 4px 8px;
     }
 
     .perf-label {

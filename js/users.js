@@ -34,12 +34,12 @@ async function loadUsersList() {
 
             html += `
                 <tr>
-                    <td>${user.cedula}</td>
-                    <td>${user.nombre} ${user.apellido}</td>
-                    <td>${user.email || '-'}</td>
-                    <td><span class="badge ${roleBadge}">${roleName}</span></td>
-                    <td><span class="badge ${stateClass}">${stateBadge}</span></td>
-                    <td>${lockBadge}</td>
+                    <td data-label="Cedula">${user.cedula}</td>
+                    <td data-label="Nombre">${user.nombre} ${user.apellido}</td>
+                    <td data-label="Email">${user.email || '-'}</td>
+                    <td data-label="Rol"><span class="badge ${roleBadge}">${roleName}</span></td>
+                    <td data-label="Estado"><span class="badge ${stateClass}">${stateBadge}</span></td>
+                    <td data-label="Bloqueo">${lockBadge}</td>
                     <td>
                         <button class="btn-action btn-view" onclick="showUserDetail('${user.id_Usuario}')">Detalle</button>
                         <button class="btn-action btn-delete" onclick="toggleUserStatus('${user.id_Usuario}', ${user.activo})">${user.activo ? 'Inactivar' : 'Activar'}</button>

@@ -26,7 +26,7 @@ async function loadSecrePatientsList() {
                     <td data-label="Nombre">${patient.nombreCompleto}</td>
                     <td data-label="Email">${patient.email || '-'}</td>
                     <td data-label="Estado"><span class="badge ${stateClass}">${stateBadge}</span></td>
-                    <td data-label="Acciones">
+                    <td>
                         <button class="btn-action btn-view" onclick="showPatientDetailSecretary(${patient.id_Paciente})">Ver Detalle</button>
                     </td>
                 </tr>
@@ -68,7 +68,7 @@ async function loadDocPatientsList() {
                     <td data-label="Nombre">${patient.nombreCompleto}</td>
                     <td data-label="Email">${patient.email || '-'}</td>
                     <td data-label="Telefono">${patient.telefono || '-'}</td>
-                    <td data-label="Acciones">
+                    <td>
                         <button class="btn-action btn-view" onclick="showPatientDetailDoctor(${patient.id_Paciente})">Ver Expediente</button>
                     </td>
                 </tr>

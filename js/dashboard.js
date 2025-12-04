@@ -185,3 +185,12 @@ async function showDoctorSection(section) {
         mainContent.innerHTML = '<p>Error cargando la sección.</p>';
     }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const toggle = document.querySelector(".menu-toggle");
+    const items = document.querySelector(".menu-items");
+
+    toggle.addEventListener("click", () => {
+        items.classList.toggle("show");
+    });
+});
