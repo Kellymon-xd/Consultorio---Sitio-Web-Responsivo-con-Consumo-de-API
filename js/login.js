@@ -1,6 +1,8 @@
 async function login(e) {
     e.preventDefault();
 
+    const loginBox = document.querySelector('.login-box');
+
     const email = document.getElementById('username').value;
     const contrasena = document.getElementById('password').value;
 
@@ -8,7 +10,7 @@ async function login(e) {
     alertDiv.style.display = "none";
 
     try {
-        const resp = await fetch(URLBASE+"Usuarios/login", {
+        const resp = await fetch(URLBASE + "Usuarios/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, contrasena })
@@ -18,11 +20,20 @@ async function login(e) {
 
         switch (resp.status) {
 
-            case 200: // OK
+            case 200: {
                 const data = JSON.parse(msg);
                 sessionStorage.setItem("currentUser", JSON.stringify(data));
-                window.location.href = "../pages/dashboard.html";
+
+                // 1️⃣ activar animación
+                loginBox.classList.add("rotate-scale-up");
+
+                // 2️⃣ esperar a que la animación termine
+                loginBox.addEventListener("animationend", () => {
+                    window.location.href = "../pages/dashboard.html";
+                }, { once: true });
+
                 return;
+            }
 
             case 401:
                 showLoginError("Correo o contraseña incorrectos");
