@@ -1,1 +1,1 @@
-const URLBASE = "https://localhost:7193/api/";
+const URLBASE = "https://kellymon.ddns.net/api/";
